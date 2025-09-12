@@ -4,10 +4,10 @@ import { useAuthService } from "@/hooks/useAuthService";
 import { useAuthFlow } from "@/hooks/useAuthFlow";
 
 // Lazy load step components
-const EmailStep = React.lazy(() => import("./emailStep"));
-const OTPStep = React.lazy(() => import("./otpStep"));
-const PasswordLoginStep = React.lazy(() => import("./passwordLoginStep"));
-const PasswordSetupStep = React.lazy(() => import("./passwordSetupStep"));
+const EmailStep = React.lazy(() => import("./EmailStep"));
+const OTPStep = React.lazy(() => import("./OTPStep"));
+const PasswordLoginStep = React.lazy(() => import("./PasswordLoginStep"));
+const PasswordSetupStep = React.lazy(() => import("./PasswordSetupStep"));
 
 interface EmailAuthProps {
   onSuccess?: () => void;
