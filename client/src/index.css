@@ -1,0 +1,342 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Minimalistic Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 255 255 255; /* white */
+    --foreground: 51 51 51; /* granite black */
+
+    --card: 255 255 255; /* white */
+    --card-foreground: 51 51 51; /* granite black */
+
+    --popover: 255 255 255; /* white */
+    --popover-foreground: 51 51 51; /* granite black */
+
+    --primary: 5 209 235; /* cyan blue #05D1EB */
+    --primary-foreground: 255 255 255; /* white */
+
+    --secondary: 240 240 245; /* light gray */
+    --secondary-foreground: 51 51 51; /* granite black */
+
+    --muted: 247 247 250; /* very light gray */
+    --muted-foreground: 102 102 102; /* medium gray */
+
+    --accent: 5 209 235; /* cyan blue #05D1EB */
+    --accent-foreground: 255 255 255; /* white */
+
+    --destructive: 229 62 62; /* warm accent red */
+    --destructive-foreground: 255 255 255; /* white */
+
+    --border: 229 229 234; /* light border */
+    --input: 250 250 250; /* light gray background */
+    --ring: 5 209 235; /* cyan blue */
+
+    --radius: 8px;
+
+    /* Custom theme colors */
+    --granite-black: 51 51 51; /* #333333 */
+    --cyan-blue: 5 209 235; /* #05D1EB */
+    --cyan-blue-light: 5 209 235; /* #05D1EB */
+    --text-graphite: 51 51 51; /* graphite black for text */
+
+    --sidebar-background: 255 255 255;
+    --sidebar-foreground: 51 65 85;
+    --sidebar-primary: 5 209 235;
+    --sidebar-primary-foreground: 248 250 252;
+    --sidebar-accent: 241 245 249;
+    --sidebar-accent-foreground: 30 41 59;
+    --sidebar-border: 226 232 240;
+    --sidebar-ring: 5 209 235;
+  }
+
+  .dark {
+    --background: 26 54 93; /* deep navy blue */
+    --foreground: 255 255 255; /* white */
+
+    --card: 30 58 100; /* darker navy */
+    --card-foreground: 255 255 255; /* white */
+
+    --popover: 30 58 100; /* darker navy */
+    --popover-foreground: 255 255 255; /* white */
+
+    --primary: 214 158 46; /* warm gold #d69e2e */
+    --primary-foreground: 26 54 93; /* deep navy blue */
+
+    --secondary: 113 128 150; /* medium gray */
+    --secondary-foreground: 255 255 255; /* white */
+
+    --muted: 113 128 150; /* medium gray */
+    --muted-foreground: 203 213 224; /* light gray */
+
+    --accent: 229 62 62; /* warm accent red */
+    --accent-foreground: 255 255 255; /* white */
+
+    --destructive: 229 62 62; /* warm accent red */
+    --destructive-foreground: 255 255 255; /* white */
+
+    --border: 113 128 150; /* medium gray */
+    --input: 113 128 150; /* medium gray */
+    --ring: 214 158 46; /* warm gold */
+
+    --sidebar-background: 30 41 59;
+    --sidebar-foreground: 226 232 240;
+    --sidebar-primary: 5 209 235;
+    --sidebar-primary-foreground: 15 23 42;
+    --sidebar-accent: 51 65 85;
+    --sidebar-accent-foreground: 248 250 252;
+    --sidebar-border: 51 65 85;
+    --sidebar-ring: 5 209 235;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold leading-tight;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+
+  /* Remove focus outline and rings from all interactive elements */
+  button, a, input, select, textarea, [role="button"], [tabindex] {
+    @apply focus:outline-none;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  button:focus, a:focus, input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    ring: none !important;
+  }
+
+  /* Ensure images are responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent horizontal scroll */
+  body, html {
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  /* Modern Real Estate Card Styling */
+  .property-card {
+    @apply bg-card rounded-lg shadow-sm border border-border overflow-hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .property-card:hover {
+    @apply shadow-lg border-primary/20;
+    transform: translateY(-4px);
+  }
+
+  /* Modern Feature Icons */
+  .feature-icon-container {
+    @apply w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mx-auto mb-4;
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  }
+
+  /* Modern Section Headers */
+  .section-title {
+    @apply text-2xl md:text-3xl lg:text-4xl font-display font-semibold text-primary;
+  }
+
+  .section-subtitle {
+    @apply text-lg md:text-xl text-muted-foreground font-medium;
+  }
+
+  .section-description {
+    @apply text-muted-foreground max-w-2xl mx-auto text-base md:text-lg leading-relaxed;
+  }
+
+  /* Professional Container */
+  .container {
+    @apply max-w-7xl mx-auto px-4 md:px-6 lg:px-8;
+  }
+
+  /* Professional Spacing */
+  .section-padding {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+
+  /* Professional Text Sizes */
+  .text-responsive-sm {
+    @apply text-sm md:text-base;
+  }
+
+  .text-responsive-base {
+    @apply text-base md:text-lg;
+  }
+
+  .text-responsive-lg {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+
+  .text-responsive-xl {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+
+  /* Modern CTA Buttons */
+  .btn-primary {
+    @apply bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .btn-secondary {
+    @apply border border-primary text-primary hover:bg-primary hover:text-primary-foreground px-6 py-3 rounded-lg font-medium transition-all duration-300;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Modern Form Elements */
+  .form-input {
+    @apply w-full px-4 py-3 border border-border rounded-lg transition-colors bg-input focus:border-primary;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .form-select {
+    @apply w-full px-4 py-3 border border-border rounded-lg transition-colors bg-input focus:border-primary;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Modern Cyan Gradients */
+.hero-gradient {
+  background: linear-gradient(135deg, #05D1EB 0%, #00B4D8 50%, #0077B6 100%);
+}
+
+.card-gradient {
+  background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)) 100%);
+}
+
+.feature-gradient {
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%);
+}
+
+.premium-gradient {
+  background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--primary)) 100%);
+}
+
+.blue-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(5, 209, 235, 0.15) 0%, transparent 50%);
+}
+
+/* Professional Animations */
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile Optimizations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Professional form styling for mobile */
+input, select, textarea {
+  @apply text-base;
+  font-size: 16px; /* Prevents zoom on iOS */
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+select option {
+  @apply bg-white text-slate-900;
+}
+
+/* Professional touch targets */
+@media (max-width: 768px) {
+  button, .btn, a[role="button"] {
+    min-height: 48px;
+    padding: 12px 16px;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Professional scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
