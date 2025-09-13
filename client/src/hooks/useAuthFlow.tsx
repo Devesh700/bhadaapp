@@ -12,6 +12,7 @@ interface AuthOptions {
 
 export const useAuthFlow = () => {
   const [step, setStep] = useState<AuthStep>("email");
+  const [forgotPassword, setForgotPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [authOptions, setAuthOptions] = useState<AuthOptions | null>(null);
   const [countdown, setCountdown] = useState(0);
@@ -29,6 +30,11 @@ export const useAuthFlow = () => {
   const goToStep = (newStep: AuthStep) => {
     setStep(newStep);
   };
+
+  const toggleForgotPassword = (val:boolean) => {
+    debugger
+    setForgotPassword(val);
+  }
 
   const goBack = () => {
     setStep("email");
@@ -67,11 +73,13 @@ export const useAuthFlow = () => {
   return {
     step,
     email,
+    forgotPassword,
     authOptions,
     countdown,
     verifiedUserData,
     setVerifiedUserData,
     goToStep,
+    toggleForgotPassword,
     goBack,
     setEmailAndOptions,
     startCountdown,

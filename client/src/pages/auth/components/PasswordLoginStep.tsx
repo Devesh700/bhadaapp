@@ -26,6 +26,7 @@ interface PasswordLoginStepProps {
   onSubmit: (password: string) => Promise<void>;
   onBack: () => void;
   onUseEmailVerification: () => Promise<void>;
+  handleForgotPassword?: () =>void;
   isLoading: boolean;
 }
 
@@ -34,6 +35,7 @@ const PasswordLoginStep: React.FC<PasswordLoginStepProps> = ({
   onSubmit, 
   onBack, 
   onUseEmailVerification,
+  handleForgotPassword,
   isLoading 
 }) => {
   const form = useForm<PasswordLoginFormValues>({
@@ -85,6 +87,8 @@ const PasswordLoginStep: React.FC<PasswordLoginStepProps> = ({
               </FormItem>
             )}
           />
+
+          <span className=' underline text-blue-600' onClick={handleForgotPassword}>forgot-password?</span>
 
           <Button type="submit" className="w-full h-12 text-base" disabled={isLoading}>
             {isLoading ? (

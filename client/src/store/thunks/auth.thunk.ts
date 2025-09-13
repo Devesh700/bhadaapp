@@ -145,20 +145,25 @@ export const getProfile = createAsyncThunk(
 
 export const sendOTP = createAsyncThunk<any,any>(
   'auth/sendOTP',
-  async ({ email }: { email: string }) => {
-    const response = await api.post('/auth/send-otp', { email });
-    return response.data;
+  async ({ email, type }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/auth/send-otp?type=${type}`, { email });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to send OTP');
+    }
   }
 );
 
 export const verifyOTPAndAuth = createAsyncThunk(
   'auth/verifyOTPAndAuth',
-  async ({ email, otp, userType }: { 
+  async ({ email, otp, userType, type }: { 
     email: string; 
     otp: string; 
-    userType?: 'user' | 'owner' | 'admin' 
+    userType?: 'user' | 'owner' | 'admin' ,
+    type?:string
   }) => {
-    const response:any = await api.post('/auth/verify-otp', { email, otp, userType });
+    const response:any = await api.post(`/auth/verify-otp?type=${type}`, { email, otp, userType });
     
     // Store token
     if (response.data.data.token) {
@@ -202,11 +207,14 @@ export const setPassword = createAsyncThunk(
 //   }
 // );
 
+// src/store/thunks/auth.thunk.ts (add this to existing thunks)
 export const googleAuth = createAsyncThunk(
   'auth/googleAuth',
-  async (googleToken: string) => {
-    const response:any = await api.post('/auth/google', { token: googleToken });
+  async (payload: { credential?: string; code?: string; scope?: string }) => {
+    const response:any = await api.post('/auth/google', payload);
+    debugger
     
+    // Store token if provided
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
     }
@@ -214,3 +222,4 @@ export const googleAuth = createAsyncThunk(
     return response.data;
   }
 );
+

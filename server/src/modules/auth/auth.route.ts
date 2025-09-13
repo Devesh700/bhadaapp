@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as authController from './auth.controller';
 import { authMiddleware } from '../../middlewares/auth';
+import { googleAuth } from './google-auth-controller';
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.post('/verify-otp', authController.verifyOTPAndAuth);
 router.post('/resend-otp', authController.resendOTP);
 router.post('/check-email', authController.checkEmailAuth);
 router.post('/set-password',authMiddleware, authController.setPassword)
+router.post("/google",googleAuth)
 
 export default router;

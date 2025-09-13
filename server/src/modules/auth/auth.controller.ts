@@ -12,8 +12,10 @@ export const sendOTP = async (req: Request, res: Response) => {
         message: 'Email is required' 
       });
     }
+
+    const { type } = req.query ;
     
-    const result = await authService.sendOTP(email);
+    const result = await authService.sendOTP(email, type as string);
     res.json({ success: true, data: result });
   } catch (error: any) {
     res.status(400).json({ 
@@ -26,6 +28,7 @@ export const sendOTP = async (req: Request, res: Response) => {
 export const verifyOTPAndAuth = async (req: Request, res: Response) => {
   try {
     const { email, otp, userType } = req.body;
+    const { type } = req.query;
     
     if (!email || !otp) {
       return res.status(400).json({ 
@@ -34,7 +37,7 @@ export const verifyOTPAndAuth = async (req: Request, res: Response) => {
       });
     }
     
-    const result = await authService.verifyOTPAndAuth(email, otp, userType);
+    const result = await authService.verifyOTPAndAuth(email, otp, userType, type as string);
     res.json({ success: true, data: result });
   } catch (error: any) {
     res.status(400).json({ 
@@ -47,7 +50,8 @@ export const verifyOTPAndAuth = async (req: Request, res: Response) => {
 export const resendOTP = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    const result = await authService.sendOTP(email);
+    const {type } = req.query;
+    const result = await authService.sendOTP(email,type as string);
     res.json({ success: true, data: result });
   } catch (error: any) {
     res.status(400).json({ 

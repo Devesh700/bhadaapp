@@ -34,6 +34,20 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    try {
+      debugger;
+      const email = authFlow.email;
+      const type = 'reset-password'
+      const response = await authService.sendOTPCode(email, type);
+      authFlow.toggleForgotPassword(true);
+      authFlow.goToStep("otp");
+      authFlow.startCountdown(60);
+    } catch (error) {
+      console.error("Error sending OTP for password reset:", error);
+    }
+  }
+
   const handlePasswordLoginSubmit = async (password: string) => {
     try {
         debugger;
@@ -50,10 +64,11 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
 
   const handleOTPSubmit = async (otp: string) => {
     try {
-      const result = await authService.verifyOTP(authFlow.email, otp);
+      const type = authFlow.forgotPassword ? 'reset-password' : 'login';
+      const result = await authService.verifyOTP(authFlow.email, otp, type);
       authFlow.setVerifiedUserData(result);
 
-      if (!result.user?.hasPassword) {
+      if (!result.user?.hasPassword && !authFlow.forgotPassword) {
         authFlow.goToStep("password-setup");
         authFlow.showWelcomeMessage(result);
       } else {
@@ -66,6 +81,7 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
 
   const handlePasswordSetupSubmit = async (password: string) => {
     try {
+      debugger
       await authService.createPassword(password);
       onSuccess?.();
     } catch (error) {
@@ -97,6 +113,11 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
     }
   };
 
+  const handleBackToLogin = () => {
+    authFlow.goToStep("password-login");
+    authFlow.toggleForgotPassword(false);
+  }
+
   const renderStep = () => {
     switch (authFlow.step) {
       case "email":
@@ -117,6 +138,7 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
               onSubmit={handlePasswordLoginSubmit}
               onBack={authFlow.goBack}
               onUseEmailVerification={handleUseEmailVerification}
+              handleForgotPassword = {handleForgotPassword}
               isLoading={authService.isLoading}
             />
           </React.Suspense>
@@ -131,6 +153,8 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
               onBack={authFlow.goBack}
               onResendOTP={handleResendOTP}
               countdown={authFlow.countdown}
+              forgotPassword = {authFlow.forgotPassword}
+              handleBackToLogin = {handleBackToLogin}
               isLoading={authService.isLoading}
             />
           </React.Suspense>

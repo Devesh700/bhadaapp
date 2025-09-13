@@ -224,7 +224,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 border-b border-blue-700 shadow-lg sticky top-0 z-50 backdrop-blur-md">
+      <header className="bg-gradient-to-br from-blue-900/85 via-blue-800/90 to-blue-900 border-b border-blue-700 shadow-lg sticky top-1 z-50 backdrop-blur-md">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}

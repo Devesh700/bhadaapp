@@ -30,9 +30,9 @@ export const useAuthService = () => {
     }
   };
 
-  const sendOTPCode = async (email: string) => {
+  const sendOTPCode = async (email: string, type?:string) => {
     try {
-      const result = await dispatch(sendOTP({ email })).unwrap();
+      const result = await dispatch(sendOTP({ email, type })).unwrap();
       toast({
         title: "OTP Sent! 📧",
         description: "Check your email for the verification code",
@@ -48,9 +48,9 @@ export const useAuthService = () => {
     }
   };
 
-  const verifyOTP = async (email: string, otp: string) => {
+  const verifyOTP = async (email: string, otp: string, type?:string) => {
     try {
-      const result = await dispatch(verifyOTPAndAuth({ email, otp })).unwrap();
+      const result = await dispatch(verifyOTPAndAuth({ email, otp, type })).unwrap();
       return result;
     } catch (error) {
       toast({

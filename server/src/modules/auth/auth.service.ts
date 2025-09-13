@@ -305,16 +305,16 @@ import { creditCoins } from '../../utils/coin-manager';
 import { Request } from 'express';
 
 // OTP Storage (in production, use Redis)
-const otpStore = new Map<string, { otp: string; expiresAt: Date; attempts: number }>();
+const otpStore = new Map<string, { otp: string; expiresAt: Date; attempts: number, type:string }>();
 
-export const sendOTP = async (email: string) => {
+export const sendOTP = async (email: string, type?:string) => {
   try {
     // Generate 6-digit OTP
     const otp = Math.random().toString().substr(2, 6);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    
+    const otpType = type || 'login';
     // Store OTP
-    otpStore.set(email, { otp, expiresAt, attempts: 0 });
+    otpStore.set(email, { otp, expiresAt, attempts: 0, type: otpType });
     
     // Send OTP via email
     const otpSent = await sendOTPEmail(email, otp);
@@ -325,13 +325,18 @@ export const sendOTP = async (email: string) => {
   }
 };
 
-export const verifyOTPAndAuth = async (email: string, otp: string, userType?: 'user' | 'vendor' | 'admin') => {
+export const verifyOTPAndAuth = async (email: string, otp: string, userType?: 'user' | 'vendor' | 'admin', type?:string) => {
   try {
     // Check OTP
     const otpData = otpStore.get(email);
+    const otpType = type || 'login';
     
     if (!otpData) {
       throw new Error('OTP not found or expired');
+    }
+
+    if( otpData.type !== otpType) {
+      throw new Error(' Invalid OTP');
     }
     
     if (otpData.expiresAt < new Date()) {

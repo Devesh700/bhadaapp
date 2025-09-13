@@ -100,23 +100,27 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAppSelector } from "@/store/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { selectIsAuthenticated } from "@/store/selectors/auth.selector";
 import EmailAuth from "./components/EmailAuth";
 import GoogleAuth from "./components/GoogleAuth";
+import { hideAuthModal } from "@/store/slices/partials.slice";
 
 const Auth = () => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, navigate]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [isAuthenticated, navigate]);
 
   const handleAuthSuccess = () => {
+    dispatch(hideAuthModal())
     navigate("/dashboard");
+    
   };
 
   return (

@@ -1,8 +1,8 @@
 // src/components/auth/steps/OTPStep.tsx
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, Timer } from "lucide-react";
+import { ArrowLeft, Shield, Timer } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,6 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useAuthFlow } from '@/hooks/useAuthFlow';
 
 const otpSchema = z.object({
   otp: z.string().length(6, "OTP must be 6 digits"),
@@ -28,6 +29,8 @@ interface OTPStepProps {
   onResendOTP: () => Promise<void>;
   countdown: number;
   isLoading: boolean;
+  handleBackToLogin: () => void;
+  forgotPassword?:boolean;
 }
 
 const OTPStep: React.FC<OTPStepProps> = ({ 
@@ -36,6 +39,8 @@ const OTPStep: React.FC<OTPStepProps> = ({
   onBack, 
   onResendOTP, 
   countdown, 
+  forgotPassword,
+  handleBackToLogin,
   isLoading 
 }) => {
   const form = useForm<OTPFormValues>({
@@ -43,13 +48,19 @@ const OTPStep: React.FC<OTPStepProps> = ({
     defaultValues: { otp: "" }
   });
 
+  const authFlow = useAuthFlow();
   const handleSubmit = (data: OTPFormValues) => {
     onSubmit(data.otp);
   };
 
+useEffect(()=> {
+  console.log("authFlow.forgotPassword changed", forgotPassword)
+},[forgotPassword])
+  const label = useMemo(()=> forgotPassword ? "Verification code to reset your password has been sent to" : "Code sent to",[authFlow]);
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start justify-between">
         <Button
           variant="ghost"
           onClick={onBack}
@@ -59,7 +70,7 @@ const OTPStep: React.FC<OTPStepProps> = ({
           ← Back
         </Button>
         <div className="text-sm text-gray-600">
-          Code sent to <span className="font-medium">{email}</span>
+          {label} <span className="font-medium">{email}</span>
         </div>
       </div>
 
@@ -87,6 +98,13 @@ const OTPStep: React.FC<OTPStepProps> = ({
               </FormItem>
             )}
           />
+
+          {forgotPassword && (
+            <span className='underline cursor-pointer text-blue-500 flex items-center gap-1' 
+            onClick={handleBackToLogin}>
+             <ArrowLeft/> Back to Login
+            </span>
+          )}
 
           <Button type="submit" className="w-full h-12 text-base" disabled={isLoading}>
             {isLoading ? (

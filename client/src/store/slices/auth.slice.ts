@@ -11,6 +11,7 @@ import {
   sendOTP,
   resendOTP,
   verifyOTPAndAuth,
+  googleAuth,
 } from '../thunks/auth.thunk';
 import apiService from '../../services/api';
 
@@ -38,7 +39,7 @@ const authSlice = createSlice({
       state.error = null;
       state.dailyLoginReward = null;
       apiService.removeAuthToken();
-      window.location.href = '/login';
+      window.location.href = '/';
     },
     clearError: (state) => {
       state.error = null;
@@ -95,6 +96,27 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
+
+      // googlelogin
+
+      .addCase(googleAuth.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(googleAuth.fulfilled, (state, action) => {
+         
+        state.isLoading = false;
+        state.user = action.payload.data;
+        state.token = action.payload.token || null;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(googleAuth.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+
+
       .addCase(getMe.pending, (state) => {
         state.isLoading = true;
         state.error = null;

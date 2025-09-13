@@ -30,13 +30,12 @@ const Dashboard = () => {
   useEffect(() => {
     debugger;
     // Get user data from localStorage
-    const storedData = localStorage.getItem("token");
     if (user) {
       setUserData(user);
     } else {
-      // navigate("/login");
+      navigate("/");
       dispatch(showAuthModal());
-      navigate(-1);
+      // navigate(-1);
     }
   }, [user]);
 

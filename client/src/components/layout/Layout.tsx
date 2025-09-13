@@ -13,16 +13,12 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  debugger
   const { isLoading, loadingText } = useLoading();
   const {user} = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
   useNavigationLoader();
 
-  useEffect(() => {
-    if(!user) {
-      dispatch(getMe())
-    }
-  },[user])
 
   return (
     <>

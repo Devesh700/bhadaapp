@@ -1,5 +1,7 @@
 
 import { Toaster } from "@/components/ui/toaster";
+
+import { lazy } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,7 +12,8 @@ import RentalProperties from "./pages/RentalProperties";
 import SaleProperties from "./pages/SaleProperties";
 import Wallet from "./pages/Wallet";
 import Auth from "./pages/auth/Auth";
-import Dashboard from "./pages/Dashboard";
+// import Dashboard from "./pages/Dashboard";
+const Dashboard = lazy(()=>import ("./pages/dashboard/Dashboard"))
 import PropertyListing from "./pages/PropertyListing";
 import VendorAuth from "./pages/VendorAuth";
 import OwnerDashboard from "./pages/OwnerDashboard";
