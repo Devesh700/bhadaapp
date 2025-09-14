@@ -21,11 +21,11 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
     try {
       const authCheck = await authService.checkEmail(email);
       authFlow.setEmailAndOptions(email, authCheck);
-      debugger;
+       
       if (authCheck.data.exists && authCheck.data.hasPassword) {
         authFlow.goToStep("password-login");
       } else {
-        await authService.sendOTPCode(email);
+        await authService.sendOTPCode(email, "login");
         authFlow.goToStep("otp");
         authFlow.startCountdown(60);
       }
@@ -36,7 +36,7 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
 
   const handleForgotPassword = async () => {
     try {
-      debugger;
+       
       const email = authFlow.email;
       const type = 'reset-password'
       const response = await authService.sendOTPCode(email, type);
@@ -50,7 +50,7 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
 
   const handlePasswordLoginSubmit = async (password: string) => {
     try {
-        debugger;
+         
       await authService.loginWithPassword(authFlow.email, password);
       onSuccess?.();
     } catch (error: any) {
@@ -64,13 +64,14 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
 
   const handleOTPSubmit = async (otp: string) => {
     try {
+      debugger
       const type = authFlow.forgotPassword ? 'reset-password' : 'login';
       const result = await authService.verifyOTP(authFlow.email, otp, type);
+      if(!authFlow.forgotPassword)
       authFlow.setVerifiedUserData(result);
-
-      if (!result.user?.hasPassword && !authFlow.forgotPassword) {
+      if (!result.data?.hasPassword || authFlow.forgotPassword) {
         authFlow.goToStep("password-setup");
-        authFlow.showWelcomeMessage(result);
+        // authFlow.showWelcomeMessage(result);
       } else {
         onSuccess?.();
       }
@@ -81,7 +82,7 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
 
   const handlePasswordSetupSubmit = async (password: string) => {
     try {
-      debugger
+       
       await authService.createPassword(password);
       onSuccess?.();
     } catch (error) {

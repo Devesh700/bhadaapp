@@ -212,7 +212,6 @@ export const googleAuth = createAsyncThunk(
   'auth/googleAuth',
   async (payload: { credential?: string; code?: string; scope?: string }) => {
     const response:any = await api.post('/auth/google', payload);
-    debugger
     
     // Store token if provided
     if (response.data.token) {

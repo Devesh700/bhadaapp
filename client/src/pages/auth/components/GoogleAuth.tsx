@@ -18,7 +18,7 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ onSuccess }) => {
 
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     try {
-      debugger;
+       
       if (!credentialResponse.credential) {
         throw new Error('No credential received from Google');
       }

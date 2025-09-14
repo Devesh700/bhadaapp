@@ -29,7 +29,7 @@ const Dashboard = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        debugger;
+         
         if (user) {
             setUserData(user);
         } else if (!isAuthenticated && !isLoading) {

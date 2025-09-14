@@ -26,6 +26,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const user = useAppSelector(selectUser)
   const dispatch = useAppDispatch();
   const closeModal = () => {
+    debugger
     dispatch(hideAuthModal());
   }
   useEffect(()=> {
@@ -34,7 +35,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }
   },[user])
   return (
-    <Dialog open={showModal && !user} onOpenChange={closeModal}>
+    <Dialog open={showModal} onOpenChange={closeModal}>
       <DialogContent className="sm:max-w-md w-[95%] rounded-xl bg-white border border-gray-200">        
         <Auth/>
       </DialogContent>

@@ -28,7 +28,7 @@ const Dashboard = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    debugger;
+     
     // Get user data from localStorage
     if (user) {
       setUserData(user);

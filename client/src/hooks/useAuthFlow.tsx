@@ -32,7 +32,7 @@ export const useAuthFlow = () => {
   };
 
   const toggleForgotPassword = (val:boolean) => {
-    debugger
+     
     setForgotPassword(val);
   }
 
