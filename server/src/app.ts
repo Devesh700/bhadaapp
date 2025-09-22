@@ -22,12 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 import authRoutes from './modules/auth/auth.route';
-// import userRoutes from './modules/user/user';
+import userRoutes from './modules/user/user.route';
 // import propertyRoutes from './modules/property/property.routes';
 // import walletRoutes from './modules/auth/wallet.routes';
 
 app.use('/api/auth', authRoutes);
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
 // app.use('/api/properties', propertyRoutes);
 // app.use('/api/wallet', walletRoutes);
 

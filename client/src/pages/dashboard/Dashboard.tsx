@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { User as IUser } from "@/store/types/auth.type";
 import { logout } from "@/store/slices/auth.slice";
 import { showAuthModal } from "@/store/slices/partials.slice";
-import ProfileTab from "./components/ProfileTab";
+import ProfileTab from "./components/Profile";
 
 interface UserData {
     isLoggedIn: boolean;
@@ -34,8 +34,8 @@ const Dashboard = () => {
             setUserData(user);
         } else if (!isAuthenticated && !isLoading) {
             navigate("/");
-            dispatch(showAuthModal());
-            // navigate(-1);
+            // dispatch(showAuthModal());
+            navigate(-1);
         }
     }, [user]);
 

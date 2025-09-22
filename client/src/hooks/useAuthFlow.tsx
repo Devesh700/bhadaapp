@@ -1,4 +1,3 @@
-// src/hooks/useAuthFlow.ts
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 

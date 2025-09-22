@@ -1,4 +1,3 @@
-// src/hooks/useAuthService.ts
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { useToast } from "@/hooks/use-toast";
 import { 
