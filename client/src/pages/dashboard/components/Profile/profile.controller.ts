@@ -1,6 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
 import { useAppDispatch } from "@/store/hooks/redux";
-import { getUserProfile, updateUserProfile } from "@/store/thunks/user.thunk";
+import { getUserProfile, updateUserProfile, upgradeRole } from "@/store/thunks/user.thunk";
 import { IUser } from "@/store/types/user.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -138,7 +138,8 @@ const [activeProfileTab, setActiveProfileTab] = useState("personal");
   const handleRoleUpgradeSubmit = async (data: any) => {
     try {
       // API call to request role upgrade
-      console.log("Requesting role upgrade:", data);
+      const response = await dispatch(upgradeRole(data))
+      console.log("Upgrade response:", response);
       
       toast({
         title: "Upgrade Request Submitted! 🚀",

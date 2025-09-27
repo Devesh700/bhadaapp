@@ -1,3 +1,4 @@
+import { StringifyOptions } from "querystring";
 import { IRequestStatus, IStatus } from ".";
 
 export interface IUser {
@@ -126,6 +127,24 @@ export interface IUser {
   updatedAt: Date;
 }
 
+export interface IUpgradeRequest {
+  user: {
+        name: string;
+        email: string;
+    };
+    userId: string;
+    _id?: string;
+    requestedRole: "vendor";
+    status: "pending" | "approved" | "rejected";
+    requestedAt: Date;
+    reviewedAt?: Date;
+    reviewedBy?: string;
+    notes?: string;
+}
+
 export interface UserState {
     user:IRequestStatus<IUser>;
+    roleUpgradeRequests: IRequestStatus<IUpgradeRequest[]>
 }
+
+export interface ReviewUpgradeRequest {requestId: string, action :"approve" | "reject", notes?:string, userId:string}

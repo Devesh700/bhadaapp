@@ -22,4 +22,7 @@ router.post('/request-role-upgrade', userController.requestRoleUpgrade);
 // Stats
 router.get('/stats', userController.getUserStats);
 
+router.get("/review", userController.getUpgradeRequests)
+router.put("/review/:requestId", userController.reviewRoleUpgradeRequest);
+
 export default router;

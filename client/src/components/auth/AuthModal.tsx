@@ -26,7 +26,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const user = useAppSelector(selectUser)
   const dispatch = useAppDispatch();
   const closeModal = () => {
-    debugger
+     
     dispatch(hideAuthModal());
   }
   useEffect(()=> {

@@ -1,10 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IStatus } from "../types";
-import { UserState } from "../types/user.type";
-import { updateUserProfile } from "../thunks/user.thunk";
+import { IUpgradeRequest, UserState } from "../types/user.type";
+import { getUpgradeRequests, updateUserProfile } from "../thunks/user.thunk";
 
 const initialState:UserState = {
     user:{
+        status:IStatus.idle,
+        data: null,
+        error: null
+    },
+    roleUpgradeRequests:{
         status:IStatus.idle,
         data: null,
         error: null
@@ -31,6 +36,20 @@ const userSlice = createSlice({
             state.user.status = IStatus.error;
             state.user.error = action.error.message;
         })
+
+        builder.addCase(getUpgradeRequests.pending, (state, action) =>{
+            state.roleUpgradeRequests.status = IStatus.running
+        })
+        builder.addCase(getUpgradeRequests.fulfilled, (state, action) =>{
+            state.roleUpgradeRequests.status = IStatus.success;
+            state.roleUpgradeRequests.data = action.payload.data
+        })
+        builder.addCase(getUpgradeRequests.rejected, (state, action) =>{
+            state.roleUpgradeRequests.status = IStatus.error;
+            state.roleUpgradeRequests.error = action.error.message;
+        })
+
+        
     }
 })
 

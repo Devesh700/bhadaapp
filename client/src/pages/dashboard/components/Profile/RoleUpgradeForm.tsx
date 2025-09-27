@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Crown } from "lucide-react";
-import { Form } from "react-router-dom";
 
 export default function RoleUpgradeForm({roleUpgradeForm, handleRoleUpgradeSubmit, setShowRoleUpgrade}) {
     return (
@@ -22,7 +21,7 @@ export default function RoleUpgradeForm({roleUpgradeForm, handleRoleUpgradeSubmi
                     </CardHeader>
                     <CardContent>
                       <Form {...roleUpgradeForm}>
-                        <form onSubmit={roleUpgradeForm.handleSubmit(handleRoleUpgradeSubmit)} className="space-y-6">
+                        <form onSubmit={roleUpgradeForm.handleSubmit(handleRoleUpgradeSubmit, (err)=>console.error(err))} className="space-y-6">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                               control={roleUpgradeForm.control}
@@ -140,6 +139,24 @@ export default function RoleUpgradeForm({roleUpgradeForm, handleRoleUpgradeSubmi
                                     {...field} 
                                     rows={3}
                                     placeholder="Tell us more about your business..."
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={roleUpgradeForm.control}
+                            name="businessDetails.businessAddress.pincode"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Pin Code</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    {...field} 
+                                    // rows={3}
+                                    placeholder="/Enter Pin Code"
                                   />
                                 </FormControl>
                                 <FormMessage />

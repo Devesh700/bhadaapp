@@ -163,3 +163,54 @@ export const getUserStats = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+export const getUpgradeRequests = async (req: Request, res: Response) => {
+  try {
+    const adminId = req.user?._id;
+    if(!adminId || req.user?.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message:"Forbidden"
+      })
+    }
+    const requests = await userService.getRoleUpgradeRequests();
+    res.status(200).json({
+      success: true,
+      data: requests,
+      message: " Role upgrade requests fetched successfully" 
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: (error as Error).message || "An Error Occured"
+    })
+  }
+}
+
+export const reviewRoleUpgradeRequest = async (req:Request, res: Response) => {
+  try {
+    const { requestId} = req.params;
+    const { action, notes, userId }= req.body;
+    const adminId = req.user?._id;
+    if(!adminId || req.user?.role !== 'admin' ) {
+      return res.status(403).json({
+        success:false,
+        message:"Forbidden"
+      })
+    }
+    const result = await userService.reviewRoleUpgradeRequest(adminId as string, userId,requestId, action, notes);
+    res.status(200).json({
+      success:true,
+      data: result,
+      message: 'Role upgrade request reviewed successfully'
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: (error as Error).message || "An error occured"
+    })
+  }
+}

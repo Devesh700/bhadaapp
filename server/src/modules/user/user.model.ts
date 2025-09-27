@@ -209,6 +209,7 @@ export interface IUser extends Document {
   isProfileComplete: boolean;
   isBusinessVerified?: boolean;
   roleUpgradeRequests?: {
+    _id?: Types.ObjectId;
     requestedRole: 'vendor';
     status: 'pending' | 'approved' | 'rejected';
     requestedAt: Date;

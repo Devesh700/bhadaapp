@@ -64,7 +64,7 @@ const EmailAuth: React.FC<EmailAuthProps> = ({ onSuccess }) => {
 
   const handleOTPSubmit = async (otp: string) => {
     try {
-      debugger
+       
       const type = authFlow.forgotPassword ? 'reset-password' : 'login';
       const result = await authService.verifyOTP(authFlow.email, otp, type);
       if(!authFlow.forgotPassword)

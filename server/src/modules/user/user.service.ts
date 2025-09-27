@@ -181,3 +181,64 @@ export const getUserStats = async (userId: string) => {
     throw error;
   }
 };
+
+export const getRoleUpgradeRequests = async () => {
+  try {
+    const users = await UserModel.find({'roleUpgradeRequests.status': {$in:['pending','approved','rejected']}}).lean();
+    const requests = users.flatMap(user => user.roleUpgradeRequests?.map(req =>({
+      ...req,user: { name: user.name, email: user.email}, userId: user._id
+    })) || []);
+    return requests;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch role upgrade requests");
+  }
+}
+
+export const reviewRoleUpgradeRequest = async (
+  adminId: string,    // the super admin reviewing
+  userId: string,     // user whose request we’re reviewing
+  requestId: string,  // unique request identifier
+  action: 'approve' | 'reject',
+  reason?: string
+) => {
+  const user = await UserModel.findById(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const request = user.roleUpgradeRequests?.find(
+    (req) => req._id?.toString() === requestId
+  );
+  if (!request) {
+    throw new Error("Upgrade request not found");
+  }
+
+  if (request.status !== 'pending') {
+    throw new Error("This request has already been reviewed");
+  }
+
+  if (action === 'approve') {
+    request.status = 'approved';
+    request.reviewedAt = new Date();
+    request.reviewedBy = new Types.ObjectId(adminId);
+
+    // actually upgrade role
+    user.role = request.requestedRole;
+  } else {
+    request.status = 'rejected';
+    request.reviewedAt = new Date();
+    request.reviewedBy = new Types.ObjectId(adminId);
+    request.notes = reason || "No reason provided";
+  }
+
+  await user.save();
+
+  return {
+    success: true,
+    message: `Request ${action}ed successfully`,
+    role: user.role,
+    request,
+  };
+};
