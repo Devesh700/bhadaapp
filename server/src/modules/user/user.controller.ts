@@ -4,7 +4,7 @@ import * as userService from './user.service';
 
 export const getProfile = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = String(req.user?._id);
     
     if (!userId) {
       return res.status(401).json({
@@ -29,7 +29,7 @@ export const getProfile = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = String(req.user?._id);
     
     if (!userId) {
       return res.status(401).json({
@@ -55,7 +55,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 
 export const requestRoleUpgrade = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = String(req.user?._id);
     
     if (!userId) {
       return res.status(401).json({
@@ -81,7 +81,7 @@ export const requestRoleUpgrade = async (req: Request, res: Response) => {
 
 export const uploadProfilePicture = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = String(req.user?._id);
     const { fileUrl } = req.body;
     
     if (!userId) {
@@ -115,7 +115,7 @@ export const uploadProfilePicture = async (req: Request, res: Response) => {
 
 export const updatePreferences = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = String(req.user?._id);
     
     if (!userId) {
       return res.status(401).json({
@@ -141,7 +141,7 @@ export const updatePreferences = async (req: Request, res: Response) => {
 
 export const getUserStats = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = String(req.user?._id);
     
     if (!userId) {
       return res.status(401).json({
@@ -193,7 +193,7 @@ export const reviewRoleUpgradeRequest = async (req:Request, res: Response) => {
   try {
     const { requestId} = req.params;
     const { action, notes, userId }= req.body;
-    const adminId = req.user?._id;
+    const adminId = String(req.user?._id);
     if(!adminId || req.user?.role !== 'admin' ) {
       return res.status(403).json({
         success:false,

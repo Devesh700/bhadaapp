@@ -85,7 +85,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const dailyLogin = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id; // from auth middleware
+    const userId = String(req.user?._id); // from auth middleware
     const role = req.user?.role;
     if(!userId || !role) {
       return res.status(400).json({ success: false, message: 'Invalid user data' });
@@ -121,7 +121,7 @@ export const checkEmailAuth = async (req: Request, res: Response) => {
 
 export const setPassword = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = String(req.user?._id);
     const { password } = req.body;
     
     if (!userId) {
