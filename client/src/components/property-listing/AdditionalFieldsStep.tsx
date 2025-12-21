@@ -48,7 +48,7 @@ const AdditionalFieldsStep = ({ form }: AdditionalFieldsStepProps) => {
         )}
       />
 
-      <FormField
+      {/* <FormField
         control={form.control}
         name="status"
         render={({ field }) => (
@@ -70,7 +70,7 @@ const AdditionalFieldsStep = ({ form }: AdditionalFieldsStepProps) => {
             <FormMessage />
           </FormItem>
         )}
-      />
+      /> */}
 
       <FormField
         control={form.control}

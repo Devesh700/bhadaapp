@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Settings, LogOut, CreditCard, Calendar, User, Users, Bell, TrendingUp, BarChart3, Search, Heart, icons } from "lucide-react";
+import { Home, Settings, LogOut, CreditCard, Calendar, User, Users, Bell, TrendingUp, BarChart3, Search, Heart, icons, House } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { User as IUser } from "@/store/types/auth.type";
@@ -12,6 +12,7 @@ import { logout } from "@/store/slices/auth.slice";
 import { showAuthModal } from "@/store/slices/partials.slice";
 import ProfileTab from "./components/Profile";
 import RoleUpgradeRequests from "./components/Admin/UpgradeRequests.tsx";
+import PropertyList from "./components/vendor/PropertyList.tsx";
 
 interface UserData {
     isLoggedIn: boolean;
@@ -84,15 +85,25 @@ const Dashboard = () => {
             gradient: "from-blue-500 to-indigo-500",
             description: "Account Settings"
         },
-        ...(userData.role === "admin" && [
+        ...(userData.role === "admin" ? [
             {
             value: 'upgrade-requests',
             label:"Upgrade Requests",
             icon: User,
-            gradient: "from-yellow-500 to orange-500",
+            gradient: "from-yellow-500 to-orange-500",
             description: "Review Role Upgrades"
         }
-    ])
+    ] : []),
+
+    ...(userData.role === "vendor" ? [
+            {
+            value: 'your-properties',
+            label:"Your Property",
+            icon: House,
+            gradient: "from-blue-500 to-green-500",
+            description: "View Your Properties"
+        }
+    ] : [])
     ];
 
     return (
@@ -343,6 +354,9 @@ const Dashboard = () => {
 
                                 <TabsContent value="upgrade-requests" className="w-full">
                                     <RoleUpgradeRequests/>
+                                </TabsContent>
+                                <TabsContent value="your-properties" className="w-full">
+                                    <PropertyList/>
                                 </TabsContent>
                             </Tabs>
                         </div>

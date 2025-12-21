@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Home, Settings, LogOut, User, Plus, Wallet, Building, TrendingUp, BarChart3, Coins, Calendar, Eye, Star, MapPin } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import OwnerProfile from "@/components/owner/OwnerProfile";
+import { useAppDispatch } from "@/store/hooks/redux";
 interface OwnerData {
   isLoggedIn: boolean;
   email: string;
@@ -52,6 +53,7 @@ const OwnerDashboard = () => {
       </div>;
   }
   const properties = JSON.parse(localStorage.getItem('owner_properties') || '[]');
+
   return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-slate-50 to-blue-100/20">
         <div className="container mx-auto px-4 py-8">

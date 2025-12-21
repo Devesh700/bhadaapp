@@ -1,12 +1,13 @@
 // src/services/email.service.ts
 import { Resend } from 'resend';
+import { sendEmail } from '../../services/email.service';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOTPEmail = async (email: string, otp: string) => {
     console.log("Sending OTP email to:", email, "with OTP:", otp);
-  await resend.emails.send({
-    from: 'onboarding@resend.dev', // Replace with your verified domain/sender
+  await sendEmail({
+    // from: 'onboarding@resend.dev', // Replace with your verified domain/sender
     to: email,
     subject: 'Your Bhada.in Verification Code',
     html: `

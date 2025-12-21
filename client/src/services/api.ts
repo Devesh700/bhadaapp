@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 
 class ApiService {
   private api: AxiosInstance;
-  private baseURL = 'http://localhost:5000/api'; // Update this
+  private baseURL = import.meta.env.VITE_API_URL ;
 
   constructor() {
     this.api = axios.create({

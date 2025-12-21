@@ -31,7 +31,7 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ onSuccess }) => {
       if (result.isNewUser) {
         toast({
           title: "Welcome to Bhada.in! 🎉",
-          description: `Account created successfully! You've earned ${result.user.wallet.coins} welcome coins!`,
+          description: `Account created successfully! You've earned ${result?.data?.wallet?.coins} welcome coins!`,
         });
       } else {
         const { dailyLoginCount, role } = result.data.loginStats;

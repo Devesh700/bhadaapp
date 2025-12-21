@@ -44,11 +44,9 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="bg-white border-gray-300">
-                <SelectItem value="Apartment" className="text-gray-900 hover:bg-gray-100 font-medium">Apartment</SelectItem>
-                <SelectItem value="Commercial" className="text-gray-900 hover:bg-gray-100 font-medium">Commercial</SelectItem>
-                <SelectItem value="Houses & Villas" className="text-gray-900 hover:bg-gray-100 font-medium">Houses & Villas</SelectItem>
-                <SelectItem value="Land" className="text-gray-900 hover:bg-gray-100 font-medium">Land</SelectItem>
-                <SelectItem value="PG Stays" className="text-gray-900 hover:bg-gray-100 font-medium">PG Stays</SelectItem>
+                <SelectItem value="rent" className="text-gray-900 hover:bg-gray-100 font-medium">Rent</SelectItem>
+                <SelectItem value="commercial" className="text-gray-900 hover:bg-gray-100 font-medium">Commercial</SelectItem>
+                <SelectItem value="sale" className="text-gray-900 hover:bg-gray-100 font-medium">Sale</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

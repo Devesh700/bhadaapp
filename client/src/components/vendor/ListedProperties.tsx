@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2, Home, MapPin, Calendar, Bed, Bath, Car, QrCode } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import PropertyListing from '@/pages/PropertyListing';
+import PropertyListing from '@/pages/properties/PropertyListing';
 import { PropertyFormData } from '@/components/property-listing/propertySchema';
 import QRCodeGenerator from './QRCodeGenerator';
 

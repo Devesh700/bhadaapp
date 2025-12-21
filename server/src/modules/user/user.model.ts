@@ -330,7 +330,7 @@ const UserSchema = new Schema<IUser>(
     
     // System Fields
     wallet: {
-      coins: { type: Number, default: 0 },
+      coins: { type: Number, default: 30 },
       totalEarned: { type: Number, default: 0 },
       totalSpent: { type: Number, default: 0 },
     },

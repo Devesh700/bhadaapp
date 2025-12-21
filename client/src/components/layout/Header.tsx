@@ -265,7 +265,7 @@ const Header = () => {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link 
-                to="/list-property" 
+                to="/create-property" 
                 className="text-blue-200 hover:text-white font-medium transition-colors duration-200 relative group"
                 style={{ outline: 'none', boxShadow: 'none' }}
               >
@@ -276,15 +276,15 @@ const Header = () => {
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center space-x-4">
-              <Button
+              {isAuthenticated && user.role === "admin" &&<Button
                 variant="ghost"
-                onClick={handleOwnerAccess}
+                onClick={()=>navigate("/dashboard")}
                 className="text-blue-200 hover:text-white hover:bg-white/10 transition-all duration-200"
                 style={{ outline: 'none', boxShadow: 'none' }}
               >
                 <Building2 className="w-4 h-4 mr-2" />
                 Owner Panel
-              </Button>
+              </Button>}
               <Button
                 onClick={()=> isAuthenticated ? dispatch(logout()) :dispatch(showAuthModal())}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -341,7 +341,7 @@ const Header = () => {
                   Buy
                 </Link>
                 <Link 
-                  to="/list-property" 
+                  to="/create-property" 
                   className="text-blue-200 hover:text-white font-medium py-2 px-3 rounded-lg hover:bg-white/10 transition-all duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                   style={{ outline: 'none', boxShadow: 'none' }}
@@ -352,14 +352,15 @@ const Header = () => {
                   <Button
                     variant="ghost"
                     onClick={() => {
-                      handleOwnerAccess();
-                      setIsMobileMenuOpen(false);
+                      // handleOwnerAccess();
+                      // setIsMobileMenuOpen(false);
+                      navigate("/dashboard")
                     }}
                     className="w-full justify-start text-blue-200 hover:text-white hover:bg-white/10"
                     style={{ outline: 'none', boxShadow: 'none' }}
                   >
                     <Building2 className="w-4 h-4 mr-2" />
-                    Owner Panel
+                    Dashboard
                   </Button>
                   <Button
                     // onClick={()=> navigate("/login")}

@@ -88,7 +88,7 @@ export const useAuthService = () => {
       });
       return result;
     } catch (error: any) {
-      if (error.message.includes('email verification')) {
+      if (error?.message?.includes('email verification')) {
         toast({
           title: "Use Email Verification",
           description: "This account uses email verification to sign in",

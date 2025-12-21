@@ -44,6 +44,7 @@ const PasswordLoginStep: React.FC<PasswordLoginStepProps> = ({
   });
 
   const handleSubmit = (data: PasswordLoginFormValues) => {
+    debugger
     onSubmit(data.password);
   };
 
