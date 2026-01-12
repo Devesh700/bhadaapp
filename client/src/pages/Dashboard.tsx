@@ -41,8 +41,8 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("token");
-    navigate("/");
+    // localStorage.removeItem("token");
+    // navigate("/");
   };
 
   if (!userData) {

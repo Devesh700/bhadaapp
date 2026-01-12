@@ -31,6 +31,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   }
   useEffect(()=> {
     if(!user){
+      debugger;
       dispatch(getMe());
     }
   },[user])

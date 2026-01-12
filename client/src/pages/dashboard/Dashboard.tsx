@@ -42,6 +42,7 @@ const Dashboard = () => {
     }, [user]);
 
     const handleLogout = () => {
+        debugger
         dispatch(logout());
         localStorage.removeItem("token");
         navigate("/");
@@ -85,7 +86,7 @@ const Dashboard = () => {
             gradient: "from-blue-500 to-indigo-500",
             description: "Account Settings"
         },
-        ...(userData.role === "admin" ? [
+        ...(userData?.role === "admin" ? [
             {
             value: 'upgrade-requests',
             label:"Upgrade Requests",
@@ -95,7 +96,7 @@ const Dashboard = () => {
         }
     ] : []),
 
-    ...(userData.role === "vendor" ? [
+    ...(userData?.role === "vendor" ? [
             {
             value: 'your-properties',
             label:"Your Property",

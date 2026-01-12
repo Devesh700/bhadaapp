@@ -33,6 +33,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      debugger;
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;

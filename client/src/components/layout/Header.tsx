@@ -276,7 +276,7 @@ const Header = () => {
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center space-x-4">
-              {isAuthenticated && user.role === "admin" &&<Button
+              {isAuthenticated &&<Button
                 variant="ghost"
                 onClick={()=>navigate("/dashboard")}
                 className="text-blue-200 hover:text-white hover:bg-white/10 transition-all duration-200"

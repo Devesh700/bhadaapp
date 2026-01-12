@@ -1,3 +1,3 @@
 import { RootState } from "../store";
 
-export const selectUpgradeRequests = (state: RootState) => state.user.roleUpgradeRequests;
+export const selectUpgradeRequests = (state: RootState) => state.user?.roleUpgradeRequests;

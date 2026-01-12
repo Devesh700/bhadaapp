@@ -7,6 +7,7 @@ import { Home, Settings, LogOut, User, Plus, Wallet, Building, TrendingUp, BarCh
 import Layout from "@/components/layout/Layout";
 import OwnerProfile from "@/components/owner/OwnerProfile";
 import { useAppDispatch } from "@/store/hooks/redux";
+import { logout } from "@/store/slices/auth.slice";
 interface OwnerData {
   isLoggedIn: boolean;
   email: string;
@@ -18,6 +19,7 @@ const OwnerDashboard = () => {
   const [ownerData, setOwnerData] = useState<OwnerData | null>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   useEffect(() => {
     console.log('Checking owner authentication...');
     const storedData = localStorage.getItem("owner_auth");
@@ -43,6 +45,7 @@ const OwnerDashboard = () => {
   }, [navigate]);
   const handleLogout = () => {
     console.log('Logging out owner...');
+    dispatch(logout())
     localStorage.removeItem("owner_auth");
     navigate("/");
   };
