@@ -41,7 +41,7 @@ const App = () => (
             {/* <Route path="/properties/rent" element={<RentalProperties />} />
             <Route path="/properties/sale" element={<SaleProperties />} /> */}
             <Route path="/properties/:type/:id" element={<PropertyView />} />
-            <Route path="/properties/:id" element={<PropertyViewPage.default />} />
+            {/* <Route path="/properties/:id" element={<PropertyViewPage.default />} /> */}
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/login" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />

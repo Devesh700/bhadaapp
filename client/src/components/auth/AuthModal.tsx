@@ -11,8 +11,9 @@ import Auth from "@/pages/auth/Auth";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { selectAuthModalState } from "@/store/selectors/partial.selector";
 import { hideAuthModal } from "@/store/slices/partials.slice";
-import { selectUser } from "@/store/selectors/auth.selector";
+import { selectToken, selectUser } from "@/store/selectors/auth.selector";
 import { getMe } from "@/store/thunks/auth.thunk";
+import { logout } from "@/store/slices/auth.slice";
 
 
 interface AuthModalProps {
@@ -24,15 +25,17 @@ interface AuthModalProps {
 const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const showModal = useAppSelector(selectAuthModalState);
   const user = useAppSelector(selectUser)
+  const token = useAppSelector(selectToken)
   const dispatch = useAppDispatch();
+
   const closeModal = () => {
      
     dispatch(hideAuthModal());
   }
   useEffect(()=> {
-    if(!user){
+    if(!user && token){
       debugger;
-      dispatch(getMe());
+      dispatch(getMe()).then((res) => {}).catch((err) => {dispatch(logout())});
     }
   },[user])
   return (

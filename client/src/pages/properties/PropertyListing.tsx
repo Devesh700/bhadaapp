@@ -35,6 +35,7 @@ type SortKey = "price-asc" | "price-desc" | "newest";
 
 const Properties = () => {
   const dispatch = useAppDispatch();
+  debugger
   const {data:items, status, error} = useAppSelector(state=>state.property.properties)
   const loading = useMemo(()=>(status === 1 ),[status])
   const params = useParams();
