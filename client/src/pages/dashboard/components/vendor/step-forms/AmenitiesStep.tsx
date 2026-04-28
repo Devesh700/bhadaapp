@@ -71,21 +71,26 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
 
   return (
     <div className="space-y-6">
+      <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
+        <h3 className="text-lg font-semibold text-slate-900">Amenities</h3>
+        <p className="text-sm text-slate-600 mt-1">Select amenities available at your property.</p>
+      </div>
+
       <div className="flex justify-between items-center">
-        <FormLabel className="text-gray-900 font-semibold text-lg">Amenities (Final Step)</FormLabel>
+        <FormLabel className="text-slate-900 font-semibold text-lg">Amenities (Final Step)</FormLabel>
         <Button
           type="button"
           variant="outline"
           onClick={handleSelectAll}
           disabled={isSubmitting}
-          className="bg-gray-100 border-gray-400 text-gray-900 hover:bg-gray-200 font-medium"
+          className="bg-white border-cyan-200 text-slate-800 hover:bg-cyan-50 font-medium"
         >
           {selectedAmenities.length === AMENITIES_LIST.length ? "Deselect All" : "Select All"}
         </Button>
       </div>
 
-      <div className="bg-blue-50 border border-blue-300 rounded-lg p-4 mb-6">
-        <p className="text-blue-800 text-sm font-medium">
+      <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4 mb-6">
+        <p className="text-cyan-800 text-sm font-medium">
           <strong>Final Step:</strong> Select the amenities available at the property, or skip if none apply, then click
           "Submit Property".
         </p>
@@ -101,16 +106,16 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
                 {AMENITIES_LIST.map((amenity) => (
                   <div
                     key={amenity}
-                    className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
+                    className="flex items-center space-x-3 bg-cyan-50/40 p-3 rounded-xl hover:bg-cyan-50 transition-colors border border-cyan-100"
                   >
                     <Checkbox
                       id={amenity}
                       checked={selectedAmenities.includes(amenity)}
                       disabled={isSubmitting}
                       onCheckedChange={(checked) => handleAmenityChange(amenity, checked as boolean)}
-                      className="border-gray-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                      className="border-cyan-300 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500"
                     />
-                    <label htmlFor={amenity} className="text-gray-900 text-sm font-medium cursor-pointer flex-1">
+                    <label htmlFor={amenity} className="text-slate-900 text-sm font-medium cursor-pointer flex-1">
                       {amenity}
                     </label>
                   </div>
@@ -123,13 +128,13 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
       />
 
       {selectedAmenities.length > 0 && (
-        <div className="bg-gray-100 rounded-lg p-4 border border-gray-300">
-          <p className="text-gray-900 font-semibold mb-2">Selected Amenities ({selectedAmenities.length}):</p>
+        <div className="bg-cyan-50/50 rounded-xl p-4 border border-cyan-100">
+          <p className="text-slate-900 font-semibold mb-2">Selected Amenities ({selectedAmenities.length}):</p>
           <div className="flex flex-wrap gap-2">
             {selectedAmenities.map((amenity) => (
               <span
                 key={amenity}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium"
+                className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-3 py-1 rounded-full text-sm font-medium"
               >
                 {amenity}
               </span>
@@ -138,12 +143,12 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
         </div>
       )}
 
-      <div className="flex justify-end pt-6 border-t border-gray-300">
+      <div className="flex justify-end pt-6 border-t border-cyan-100">
         <Button
           type="button"
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-3 text-lg font-semibold"
+          className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white px-8 py-3 text-lg font-semibold"
         >
           {isSubmitting ? (
             <>

@@ -108,7 +108,7 @@ const PropertyList = () => {
                       size="sm"
                       variant="outline"
                       className="flex-1 border-blue-200 text-blue-600 hover:bg-blue-50"
-                      onClick={()=> navigate(`/properties/${property._id}`)}
+                      onClick={()=> navigate(`/properties/${property.propertyType}/${property._id}`)}
                     >
                       View
                     </Button>

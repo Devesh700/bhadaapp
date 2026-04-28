@@ -16,6 +16,7 @@ import { selectUser } from "@/store/selectors/auth.selector";
 import { getMe } from "@/store/thunks/auth.thunk";
 
 const PropertyView = () => {
+  debugger
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -27,6 +28,7 @@ const PropertyView = () => {
   const [userCoins, setUserCoins] = useState(0);
 
   useEffect(() => {
+    debugger
     if (id) {
       dispatch(getProperty(id));
     }
@@ -49,7 +51,7 @@ const PropertyView = () => {
   },[user,property])
 
   const handleUnlockContact = () => {
-    if (user.wallet.coins < 10) {
+    if (user?.wallet?.coins < 10) {
       toast({
         title: "Insufficient Coins",
         description: "You need at least 10 coins to unlock contact details.",
@@ -223,7 +225,7 @@ const PropertyView = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-center gap-2">
                     <Coins className="w-6 h-6 text-amber-600" />
-                    <span className="text-lg font-bold text-gray-800">Your Coins: {user.wallet.coins}</span>
+                    <span className="text-lg font-bold text-gray-800">Your Coins: {user?.wallet?.coins}</span>
                   </div>
                 </CardContent>
               </Card>

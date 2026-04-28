@@ -11,11 +11,13 @@ import ReviewsSection from "@/components/home/ReviewsSection";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useAppDispatch } from "@/store/hooks/redux";
 import { showAuthModal } from "@/store/slices/partials.slice";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const dispatch = useAppDispatch();
   // const [showAuthModal, setShowAuthModal] = useState(false);
   const { setIsLoading, setLoadingText } = useLoading();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Show initial loading for home page content
@@ -32,11 +34,11 @@ const Index = () => {
   return (
     <Layout>
       <div>
-        <HeroSection onStartSearch={() => dispatch(showAuthModal())} />
-        <FeaturesSection />
+        <HeroSection onStartSearch={() => navigate("/properties")} />
         <FeaturedPropertiesSection />
         <CitiesSection />
         <RewardsSection />
+        <FeaturesSection />
         <ReviewsSection />
       </div>
 

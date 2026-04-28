@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authMiddleware } from "../../middlewares/auth";
+import { authMiddleware, optionalAuthMiddleware } from "../../middlewares/auth";
 import { PropertyController } from "./property.controller";
 
 const router = Router();
@@ -11,7 +11,7 @@ router.put("/:id", authMiddleware, PropertyController.updateProperty);
 router.delete("/:id", authMiddleware, PropertyController.deleteProperty);
 
 // Search + history
-router.post("/search", authMiddleware, PropertyController.searchProperties);
+router.post("/search", optionalAuthMiddleware, PropertyController.searchProperties);
 router.post("/me", authMiddleware, PropertyController.getMyProperties)
 // Counter updates (view/contact/whatsapp)
 router.post(

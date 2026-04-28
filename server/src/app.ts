@@ -14,7 +14,7 @@ const app: Application = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({origin:"*"}));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());

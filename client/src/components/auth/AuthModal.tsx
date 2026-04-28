@@ -34,7 +34,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   }
   useEffect(()=> {
     if(!user && token){
-      debugger;
+       
       dispatch(getMe()).then((res) => {}).catch((err) => {dispatch(logout())});
     }
   },[user])

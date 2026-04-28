@@ -11,19 +11,27 @@ interface BasicInformationStepProps {
 }
 
 const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
+  const inputClass =
+    "bg-cyan-50/50 border-cyan-200 text-slate-900 placeholder:text-slate-500 focus:bg-white focus:border-cyan-500 rounded-xl";
+
   return (
     <div className="space-y-6">
+      <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
+        <h3 className="text-lg font-semibold text-slate-900">Basic Information</h3>
+        <p className="text-sm text-slate-600 mt-1">Add core details that describe your property listing.</p>
+      </div>
+
       <FormField
         control={form.control}
         name="title"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-gray-900 font-semibold text-base">Property Title *</FormLabel>
+            <FormLabel className="text-slate-800 font-semibold text-base">Property Title *</FormLabel>
             <FormControl>
               <Input
                 placeholder="Enter property title"
                 {...field}
-                className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+                className={inputClass}
               />
             </FormControl>
             <FormMessage />
@@ -37,17 +45,17 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
           name="propertyType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-900 font-semibold text-base">Type *</FormLabel>
+              <FormLabel className="text-slate-800 font-semibold text-base">Type *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="bg-gray-100 border-gray-400 text-gray-900 focus:bg-white focus:border-blue-500 font-medium">
+                  <SelectTrigger className={inputClass}>
                     <SelectValue placeholder="Select property type" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent className="bg-white border-gray-300">
-                  <SelectItem value="rent" className="text-gray-900 hover:bg-gray-100 font-medium">Rent</SelectItem>
-                  <SelectItem value="commercial" className="text-gray-900 hover:bg-gray-100 font-medium">Commercial</SelectItem>
-                  <SelectItem value="sale" className="text-gray-900 hover:bg-gray-100 font-medium">Sale</SelectItem>
+                <SelectContent className="bg-white border-cyan-100">
+                  <SelectItem value="rent" className="text-slate-900 hover:bg-cyan-50 font-medium">Rent</SelectItem>
+                  <SelectItem value="commercial" className="text-slate-900 hover:bg-cyan-50 font-medium">Commercial</SelectItem>
+                  <SelectItem value="sale" className="text-slate-900 hover:bg-cyan-50 font-medium">Sale</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -60,18 +68,18 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-900 font-semibold text-base">Category *</FormLabel>
+              <FormLabel className="text-slate-800 font-semibold text-base">Category *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="bg-gray-100 border-gray-400 text-gray-900 focus:bg-white focus:border-blue-500 font-medium">
+                  <SelectTrigger className={inputClass}>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent className="bg-white border-gray-300">
-                  <SelectItem value="apartment" className="text-gray-900 hover:bg-gray-100 font-medium">Apartment</SelectItem>
-                  <SelectItem value="house" className="text-gray-900 hover:bg-gray-100 font-medium">House</SelectItem>
-                  <SelectItem value="plot" className="text-gray-900 hover:bg-gray-100 font-medium">Plot</SelectItem>
-                  <SelectItem value="office" className="text-gray-900 hover:bg-gray-100 font-medium">Office</SelectItem>
+                <SelectContent className="bg-white border-cyan-100">
+                  <SelectItem value="apartment" className="text-slate-900 hover:bg-cyan-50 font-medium">Apartment</SelectItem>
+                  <SelectItem value="house" className="text-slate-900 hover:bg-cyan-50 font-medium">House</SelectItem>
+                  <SelectItem value="plot" className="text-slate-900 hover:bg-cyan-50 font-medium">Plot</SelectItem>
+                  <SelectItem value="office" className="text-slate-900 hover:bg-cyan-50 font-medium">Office</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -85,11 +93,11 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-gray-900 font-semibold text-base">Property Description *</FormLabel>
+            <FormLabel className="text-slate-800 font-semibold text-base">Property Description *</FormLabel>
             <FormControl>
               <Textarea
                 placeholder="Describe the property in detail..."
-                className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 min-h-[120px] font-medium"
+                className={`${inputClass} min-h-[120px]`}
                 {...field}
               />
             </FormControl>
@@ -103,14 +111,14 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
         name="price"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-gray-900 font-semibold text-base">Price *</FormLabel>
+            <FormLabel className="text-slate-800 font-semibold text-base">Price *</FormLabel>
             <FormControl>
               <Input
                 type="number"
                 placeholder="0"
                 value={Number.isFinite(field.value as any) ? field.value : ""}
                 onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
-                className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+                className={inputClass}
               />
             </FormControl>
             <FormMessage />

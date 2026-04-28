@@ -53,11 +53,8 @@ export class PropertyController {
 
   static async searchProperties(req: Request, res: Response) {
     try {
-        if(!req.user) {
-            return res.status(401).json({message:"Unauthorized"})
-        }
       const results = await PropertyService.searchProperties(
-        req.user._id as Types.ObjectId,
+        req.user?._id as Types.ObjectId | undefined,
         req.body
       );
       res.json({success:true,data:results});

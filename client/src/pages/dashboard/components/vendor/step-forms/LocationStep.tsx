@@ -10,19 +10,27 @@ interface LocationStepProps {
 }
 
 const LocationStep = ({ form }: LocationStepProps) => {
+  const inputClass =
+    "bg-cyan-50/50 border-cyan-200 text-slate-900 placeholder:text-slate-500 focus:bg-white focus:border-cyan-500 rounded-xl";
+
   return (
     <div className="space-y-6">
+      <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
+        <h3 className="text-lg font-semibold text-slate-900">Location Details</h3>
+        <p className="text-sm text-slate-600 mt-1">Provide an accurate address so users can find your property.</p>
+      </div>
+
       <FormField
         control={form.control}
         name="location.address"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-gray-900 font-semibold text-base">Full Address *</FormLabel>
+            <FormLabel className="text-slate-800 font-semibold text-base">Full Address *</FormLabel>
             <FormControl>
               <Textarea
                 placeholder="Enter complete property address"
                 {...field}
-                className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+                className={`${inputClass} min-h-[110px]`}
               />
             </FormControl>
             <FormMessage />
@@ -36,12 +44,12 @@ const LocationStep = ({ form }: LocationStepProps) => {
           name="location.city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-900 font-semibold text-base">City *</FormLabel>
+              <FormLabel className="text-slate-800 font-semibold text-base">City *</FormLabel>
               <FormControl>
                 <Input
                   placeholder="City"
                   {...field}
-                  className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+                  className={inputClass}
                 />
               </FormControl>
               <FormMessage />
@@ -54,12 +62,12 @@ const LocationStep = ({ form }: LocationStepProps) => {
           name="location.state"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-900 font-semibold text-base">State *</FormLabel>
+              <FormLabel className="text-slate-800 font-semibold text-base">State *</FormLabel>
               <FormControl>
                 <Input
                   placeholder="State"
                   {...field}
-                  className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+                  className={inputClass}
                 />
               </FormControl>
               <FormMessage />
@@ -72,12 +80,12 @@ const LocationStep = ({ form }: LocationStepProps) => {
           name="location.pincode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-900 font-semibold text-base">Pincode *</FormLabel>
+              <FormLabel className="text-slate-800 font-semibold text-base">Pincode *</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Pincode"
                   {...field}
-                  className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+                  className={inputClass}
                 />
               </FormControl>
               <FormMessage />
@@ -91,14 +99,14 @@ const LocationStep = ({ form }: LocationStepProps) => {
             name="location.coordinates.lat"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-900 font-semibold text-base">Latitude *</FormLabel>
+                <FormLabel className="text-slate-800 font-semibold text-base">Latitude *</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     placeholder="Lat"
                     value={Number.isFinite(field.value as any) ? field.value : ""}
                     onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
-                    className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+                    className={inputClass}
                   />
                 </FormControl>
                 <FormMessage />
@@ -111,14 +119,14 @@ const LocationStep = ({ form }: LocationStepProps) => {
             name="location.coordinates.lng"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-900 font-semibold text-base">Longitude *</FormLabel>
+                <FormLabel className="text-slate-800 font-semibold text-base">Longitude *</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     placeholder="Lng"
                     value={Number.isFinite(field.value as any) ? field.value : ""}
                     onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
-                    className="bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+                    className={inputClass}
                   />
                 </FormControl>
                 <FormMessage />

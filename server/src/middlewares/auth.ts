@@ -29,3 +29,25 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     return res.status(401).json({ message: 'Unauthorized: Invalid token' });
   }
 };
+
+export const optionalAuthMiddleware = async (req: Request, _res: Response, next: NextFunction) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return next();
+    }
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const user = await User.findById(decoded.id);
+
+    if (user) {
+      req.user = user;
+    }
+
+    return next();
+  } catch (error) {
+    // Keep request public even when token is invalid
+    return next();
+  }
+};

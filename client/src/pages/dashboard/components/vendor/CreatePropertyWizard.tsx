@@ -6,7 +6,7 @@ import { PropertyFormData, propertyFormSchema } from "./step-forms/propertySchem
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, CheckCircle, Clock } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle, Clock, ChevronLeft } from "lucide-react";
 import BasicInformationStep from "./step-forms/BasicInformationStep";
 import AdditionalFieldsStep from "./step-forms/AdditionalFieldsStep";
 import LocationStep from "./step-forms/LocationStep";
@@ -238,15 +238,27 @@ export default function CreatePropertyWizard({
   const CurrentStepComponent = steps[currentStep - 1].component;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
+    <div className="min-h-screen bg-primary s">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          <div className="mb-6">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => navigate(-1)}
+              className="text-slate-700 hover:bg-cyan-100 hover:text-slate-900"
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          </div>
+
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8 bg-white/80 rounded-2xl border border-cyan-100 shadow-sm px-6 py-8">
+            <h1 className="text-4xl font-bold text-slate-900 mb-4">
               {editMode ? "Edit Your Property" : "List Your Property"}
             </h1>
-            <p className="text-gray-700 text-lg font-medium">
+            <p className="text-slate-600 text-lg font-medium">
               {editMode ? "Update your property details" : "Complete all steps to list your property on Bhada.in"}
             </p>
           </div>
@@ -254,10 +266,10 @@ export default function CreatePropertyWizard({
           {/* Progress */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-slate-900">
                 Step {currentStep} of {steps.length}: {steps[currentStep - 1].title}
               </h2>
-              <span className="text-gray-800 font-medium">{Math.round(progress)}% Complete</span>
+              <span className="text-slate-700 font-medium">{Math.round(progress)}% Complete</span>
             </div>
             <Progress value={progress} className="h-3" />
           </div>
@@ -265,7 +277,7 @@ export default function CreatePropertyWizard({
           {/* Form */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="bg-white rounded-xl p-8 border border-gray-300 shadow-lg">
+              <div className="bg-white/95 backdrop-blur rounded-2xl p-8 border border-cyan-100 shadow-lg">
                 {currentStep === steps.length ? (
                   <AmenitiesStep
                     form={form}
@@ -285,7 +297,7 @@ export default function CreatePropertyWizard({
                     variant="outline"
                     onClick={prevStep}
                     disabled={currentStep === 1}
-                    className="bg-gray-200 border-gray-400 text-gray-800 hover:bg-gray-300 font-medium"
+                    className="bg-white border-cyan-300 text-slate-700 hover:bg-cyan-50 font-medium"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Previous
@@ -294,7 +306,7 @@ export default function CreatePropertyWizard({
                   <Button
                     type="button"
                     onClick={nextStep}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                    className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-medium shadow-md"
                   >
                     Next
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -309,7 +321,7 @@ export default function CreatePropertyWizard({
                     variant="outline"
                     onClick={prevStep}
                     disabled={isSubmitting}
-                    className="bg-gray-200 border-gray-400 text-gray-800 hover:bg-gray-300 font-medium"
+                    className="bg-white border-cyan-300 text-slate-700 hover:bg-cyan-50 font-medium"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Previous
@@ -323,16 +335,16 @@ export default function CreatePropertyWizard({
 
       {/* Review Dialog (preserved, not auto-opened) */}
       <Dialog open={showReviewDialog} onOpenChange={() => {}}>
-        <DialogContent className="bg-white border-gray-200 text-gray-800">
+        <DialogContent className="bg-white border-cyan-100 text-slate-800">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-gray-900">
-              <Clock className="w-5 h-5 text-blue-500" />
+            <DialogTitle className="flex items-center gap-2 text-slate-900">
+              <Clock className="w-5 h-5 text-cyan-500" />
               Property Under Review
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-6">
-            <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-700">
+            <div className="animate-spin w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-slate-700">
               Your property listing is being reviewed by our team. You'll be notified once it's approved.
             </p>
           </div>
@@ -346,7 +358,7 @@ export default function CreatePropertyWizard({
         onContinue={() => {
           setShowSuccessDialog(false);
           if (editMode && onEditComplete) onEditComplete();
-          else navigate("/vendor/dashboard");
+          else navigate("/dashboard");
         }}
       />
     </div>
@@ -364,26 +376,26 @@ function SuccessDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="bg-white border-gray-200 text-gray-800">
+      <DialogContent className="bg-white border-cyan-100 text-slate-800">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-gray-900">
+          <DialogTitle className="flex items-center gap-2 text-slate-900">
             <CheckCircle className="w-5 h-5 text-green-500" />
             {editMode ? "Property Updated Successfully!" : "Property Listed Successfully!"}
           </DialogTitle>
         </DialogHeader>
         <div className="text-center py-6">
           {!editMode && (
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-gradient-to-r from-cyan-500 to-sky-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl font-bold text-white">+10</span>
             </div>
           )}
-          <h3 className="text-xl font-semibold mb-2 text-gray-900">Congratulations!</h3>
-          <p className="text-gray-700 mb-4">
+          <h3 className="text-xl font-semibold mb-2 text-slate-900">Congratulations!</h3>
+          <p className="text-slate-700 mb-4">
             {editMode
               ? "Your property has been successfully updated and is under review."
               : "Your property has been successfully listed and 10 coins have been added to your wallet."}
           </p>
-          <Button onClick={onContinue} className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+          <Button onClick={onContinue} className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-medium">
             Continue
           </Button>
         </div>

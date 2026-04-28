@@ -1,61 +1,95 @@
 
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronRight, MapPin, Sparkles, TrendingUp } from "lucide-react";
+import propertyService from "@/store/services/property.service";
+import { Property } from "@/store/types/property.type";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
+import { searchProperties } from "@/store/thunks/property.thunk";
 
-// Enhanced cities data for SEO
-const cities = [
-  { 
-    name: "Bangalore", 
-    properties: 1250, 
-    growth: "+15%",
-    image: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+const cityVisualMap: Record<string, { image: string; gradient: string; description: string }> = {
+  bangalore: {
+    image: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=400&q=80",
     gradient: "from-blue-500 to-blue-600",
-    description: "IT capital with modern apartments and tech hubs"
+    description: "IT capital with modern apartments and tech hubs",
   },
-  { 
-    name: "Mumbai", 
-    properties: 2100, 
-    growth: "+22%",
-    image: "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+  mumbai: {
+    image: "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=400&q=80",
     gradient: "from-blue-600 to-blue-700",
-    description: "Financial capital with premium real estate"
+    description: "Financial capital with premium real estate",
   },
-  { 
-    name: "Delhi", 
-    properties: 1800, 
-    growth: "+18%",
-    image: "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+  delhi: {
+    image: "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?auto=format&fit=crop&w=400&q=80",
     gradient: "from-blue-700 to-blue-800",
-    description: "National capital with diverse property options"
+    description: "National capital with diverse property options",
   },
-  { 
-    name: "Chennai", 
-    properties: 950, 
-    growth: "+12%",
-    image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    gradient: "from-blue-800 to-blue-900",
-    description: "Cultural hub with affordable housing"
-  },
-  { 
-    name: "Hyderabad", 
-    properties: 780, 
-    growth: "+25%",
-    image: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    gradient: "from-blue-500 to-blue-700",
-    description: "Emerging tech city with great investment potential"
-  },
-  { 
-    name: "Pune", 
-    properties: 650, 
-    growth: "+20%",
-    image: "https://images.unsplash.com/photo-1595046006991-24d34f4b7eb4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    gradient: "from-blue-600 to-blue-800",
-    description: "Educational hub with modern infrastructure"
-  }
-];
+};
 
 const CitiesSection = () => {
+  const navigate = useNavigate();
+  // const [properties, setProperties] = useState<Property[]>([]);
+  // const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const {properties} = useAppSelector((state)=>state.property);
+
+  useEffect(() => {
+    const loadCityData = async () => {
+      try {
+         
+        // setLoading(true);
+        // const response = await propertyService.searchProperties({
+        //   filters: {  },
+        // });
+        const response = await dispatch(searchProperties(
+          {filters: { }}
+        ))
+        
+        // setProperties(response?.payload.data || []);
+      } catch (error) {
+        // setProperties([]);
+      } finally {
+        // setLoading(false);
+      }
+    };
+    if(!properties?.data?.length)
+    loadCityData();
+  }, []);
+
+  const cities = useMemo(() => {
+    const bucket: Record<string, number> = {};
+    properties?.data?.forEach((property) => {
+      const city = property?.location?.city?.trim();
+      if (!city) return;
+      bucket[city] = (bucket[city] || 0) + 1;
+    });
+
+    const maxCount = Math.max(1, ...Object.values(bucket));
+    return Object.entries(bucket)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, count]) => {
+        const key = name.toLowerCase();
+        const visual = cityVisualMap[key] || {
+          image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80",
+          gradient: "from-blue-500 to-blue-700",
+          description: "Explore verified homes and commercial listings.",
+        };
+
+        return {
+          name,
+          properties: count,
+          growth: `+${Math.max(8, Math.round((count / maxCount) * 25))}%`,
+          image: visual.image,
+          gradient: visual.gradient,
+          description: visual.description,
+        };
+      });
+  }, [properties]);
+
+  const loading = useMemo(()=>(properties?.status === 0 || properties?.status === 1),[properties])
   return (
     <section className="py-8 sm:py-12 md:py-16 bg-gradient-to-br from-white via-blue-50/30 to-blue-100/30 relative overflow-hidden" aria-label="Explore Properties by Cities - Find Homes Across India">
       {/* Mobile-optimized Background Effects */}
@@ -80,12 +114,17 @@ const CitiesSection = () => {
         </div>
 
         {/* Mobile-first responsive grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
+        {loading ? (
+          <div className="text-center py-10 text-gray-600">Loading cities...</div>
+        ) : cities.length === 0 ? (
+          <div className="text-center py-10 text-gray-600">No city data available right now.</div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
           {cities.map((city, index) => (
             <Card 
               key={index}
               className="group cursor-pointer bg-white/95 backdrop-blur-md border border-blue-100/60 hover:shadow-xl transition-all duration-700 transform hover:-translate-y-2 sm:hover:-translate-y-3 md:hover:-translate-y-4 hover:scale-105 hover:rotate-1 relative overflow-hidden"
-              onClick={() => console.log(`Navigate to ${city.name} properties`)}
+              onClick={() => navigate(`/properties/rent?city=${encodeURIComponent(city.name)}`)}
               style={{ animationDelay: `${index * 0.1}s` }}
               role="button"
               tabIndex={0}
@@ -148,11 +187,15 @@ const CitiesSection = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
+          </div>
+        )}
 
         {/* Mobile-optimized Bottom CTA */}
         <div className="mt-8 sm:mt-10 md:mt-12 text-center">
-          <div className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-lg sm:rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+          <div
+            className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-lg sm:rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer group"
+            onClick={() => navigate("/properties/rent")}
+          >
             <MapPin className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-bounce" />
             <div className="text-left">
               <div className="font-bold text-sm sm:text-base">Explore All Cities</div>

@@ -1,92 +1,73 @@
 
+import { useEffect, useMemo, useState } from "react";
 import { Star, Zap } from "lucide-react";
 import PropertyCard from "./PropertyCard";
+import propertyService from "@/store/services/property.service";
+import { Property } from "@/store/types/property.type";
+import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
+import { searchProperties } from "@/store/thunks/property.thunk";
 
-// Enhanced featured properties data with SEO content
-const featuredProperties = [
-  {
-    id: 1,
-    name: "Luxury Villa Paradise",
-    location: "Koramangala, Bangalore",
-    pincode: "560034",
-    price: "₹2.5 Cr",
-    type: "Buy Property",
-    bedrooms: 4,
-    bathrooms: 3,
-    rating: 4.8,
-    views: 1250,
-    amenities: ["Swimming Pool", "Gym", "Parking", "Security", "Garden"],
-    image: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    featured: true,
-    trending: true
-  },
-  {
-    id: 2,
-    name: "Modern Apartment",
-    location: "HSR Layout, Bangalore",
-    pincode: "560102",
-    price: "₹45,000/month",
-    type: "Rental Property",
-    bedrooms: 2,
-    bathrooms: 2,
-    rating: 4.6,
-    views: 890,
-    amenities: ["WiFi", "Balcony", "Parking", "Power Backup"],
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    featured: false,
-    trending: false
-  },
-  {
-    id: 3,
-    name: "Commercial Space",
-    location: "MG Road, Bangalore",
-    pincode: "560001",
-    price: "₹1.8 Cr",
-    type: "Buy Property",
-    bedrooms: null,
-    bathrooms: 2,
-    rating: 4.7,
-    views: 645,
-    amenities: ["Central AC", "Elevator", "Parking", "Security"],
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    featured: true,
-    trending: false
-  },
-  {
-    id: 4,
-    name: "Penthouse Suite",
-    location: "Indiranagar, Bangalore",
-    pincode: "560038",
-    price: "₹85,000/month",
-    type: "Rental Property",
-    bedrooms: 3,
-    bathrooms: 3,
-    rating: 4.9,
-    views: 1100,
-    amenities: ["Terrace", "Gym", "Pool", "Concierge"],
-    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    featured: true,
-    trending: true
-  },
-  {
-    id: 5,
-    name: "Studio Apartment",
-    location: "Electronic City, Bangalore",
-    pincode: "560100",
-    price: "₹18,000/month",
-    type: "Rental Property",
-    bedrooms: 1,
-    bathrooms: 1,
-    rating: 4.4,
-    views: 567,
-    amenities: ["WiFi", "Furnished", "Power Backup"],
-    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    featured: false,
-    trending: false
-  }
-];
+const formatPrice = (property: Property) => {
+  const value = Number(property.price || 0).toLocaleString("en-IN");
+  return property.propertyType === "rent" ? `₹${value}/month` : `₹${value}`;
+};
 
 const FeaturedPropertiesSection = () => {
+  // const [properties, setProperties] = useState<Property[]>([]);
+  // const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const {properties} = useAppSelector((state)=>state.property)
+
+  useEffect(() => {
+    const loadFeatured = async () => {
+      try {
+        // setLoading(true);
+        // const featuredResponse = await propertyService.searchProperties({
+        //   filters: {  isFeatured: true },
+        // });
+        const featuredResponse = await dispatch(searchProperties(
+          {filters: { isFeatured: true }}
+        ))
+
+       } catch (error) {
+        // setProperties([]);
+        console.error("Error Fetching Properties",error)
+      } finally {
+        // setLoading(false);
+      }
+    };
+    if(!properties?.data?.length)
+    loadFeatured();
+  }, []);
+
+  const featuredProperties = useMemo(() => {
+    const sorted = [...properties?.data || []].sort((a, b) => {
+      const featuredScoreA = a.isFeatured ? 1 : 0;
+      const featuredScoreB = b.isFeatured ? 1 : 0;
+      if (featuredScoreA !== featuredScoreB) return featuredScoreB - featuredScoreA;
+      return (b.viewCount || 0) - (a.viewCount || 0);
+    });
+
+    return sorted.slice(0, 10).map((item, index) => ({
+      id: index + 1,
+      name: item.title,
+      location: item.location?.city || "Unknown",
+      pincode: item.location?.pincode || "NA",
+      price: formatPrice(item),
+      type: item.propertyType === "rent" ? "Rental Property" : "Buy Property",
+      bedrooms: item.specifications?.bedrooms ?? null,
+      bathrooms: item.specifications?.bathrooms ?? 0,
+      rating: 4.5,
+      views: item.viewCount || 0,
+      amenities: item.specifications?.amenities || [],
+      image: item.images?.[0] || "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=600&q=80",
+      featured: item.isFeatured,
+      trending: (item.viewCount || 0) > 100,
+    }));
+  }, [properties]);
+  
+  const loading = useMemo(()=>(properties?.status === 0 || properties?.status === 1),[properties])
+
   return (
     <section className="py-8 sm:py-12 md:py-16 bg-gradient-to-br from-blue-50/40 via-white to-blue-100/30 relative overflow-hidden" aria-label="Featured Properties - Premium Real Estate Listings in India">
       {/* Mobile-optimized Background Effects */}
@@ -111,16 +92,22 @@ const FeaturedPropertiesSection = () => {
         </div>
 
         {/* Mobile-responsive properties display */}
-        <div className="overflow-hidden relative rounded-lg sm:rounded-xl md:rounded-2xl">
-          <div className="flex animate-scroll space-x-3 sm:space-x-4 md:space-x-6" style={{ 
-            animation: 'scroll 40s linear infinite',
-            width: 'calc(280px * 10)'
-          }}>
-            {[...featuredProperties, ...featuredProperties].map((property, index) => (
-              <PropertyCard key={`${property.id}-${index}`} property={property} index={index} />
-            ))}
+        {loading ? (
+          <div className="text-center py-10 text-gray-600">Loading featured properties...</div>
+        ) : featuredProperties.length === 0 ? (
+          <div className="text-center py-10 text-gray-600">No featured properties available right now.</div>
+        ) : (
+          <div className="overflow-hidden relative rounded-lg sm:rounded-xl md:rounded-2xl">
+            <div className="flex animate-scroll space-x-3 sm:space-x-4 md:space-x-6" style={{ 
+              animation: 'scroll 40s linear infinite',
+              width: `calc(280px * ${featuredProperties.length * 2})`
+            }}>
+              {[...featuredProperties, ...featuredProperties].map((property, index) => (
+                <PropertyCard key={`${property.id}-${index}`} property={property} index={index} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <style>{`

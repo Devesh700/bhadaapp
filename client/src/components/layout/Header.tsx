@@ -264,14 +264,16 @@ const Header = () => {
                 Buy
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              <Link 
-                to="/create-property" 
-                className="text-blue-200 hover:text-white font-medium transition-colors duration-200 relative group"
-                style={{ outline: 'none', boxShadow: 'none' }}
-              >
-                List Property
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
+              {isAuthenticated && user?.role === "vendor" && (
+                <Link 
+                  to="/create-property" 
+                  className="text-blue-200 hover:text-white font-medium transition-colors duration-200 relative group"
+                  style={{ outline: 'none', boxShadow: 'none' }}
+                >
+                  List Property
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              )}
             </nav>
 
             {/* Desktop Actions */}
@@ -340,14 +342,16 @@ const Header = () => {
                 >
                   Buy
                 </Link>
-                <Link 
-                  to="/create-property" 
-                  className="text-blue-200 hover:text-white font-medium py-2 px-3 rounded-lg hover:bg-white/10 transition-all duration-200"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  style={{ outline: 'none', boxShadow: 'none' }}
-                >
-                  List Property
-                </Link>
+                {isAuthenticated && user?.role === "vendor" && (
+                  <Link 
+                    to="/create-property" 
+                    className="text-blue-200 hover:text-white font-medium py-2 px-3 rounded-lg hover:bg-white/10 transition-all duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    style={{ outline: 'none', boxShadow: 'none' }}
+                  >
+                    List Property
+                  </Link>
+                )}
                 <div className="pt-3 border-t border-blue-700 space-y-3">
                   <Button
                     variant="ghost"

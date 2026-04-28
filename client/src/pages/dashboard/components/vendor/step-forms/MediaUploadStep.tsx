@@ -16,6 +16,8 @@ const MediaUploadStep = ({ form }: MediaUploadStepProps) => {
   const videos = form.watch("videos") || [];
   const [imageUrl, setImageUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const inputClass =
+    "max-w-lg bg-white border-cyan-200 text-slate-900 placeholder:text-slate-500 focus:bg-white focus:border-cyan-500 rounded-xl";
 
   const addImage = () => {
     const url = imageUrl.trim();
@@ -43,25 +45,29 @@ const MediaUploadStep = ({ form }: MediaUploadStepProps) => {
 
   return (
     <div className="space-y-8">
+      <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
+        <h3 className="text-lg font-semibold text-slate-900">Media</h3>
+        <p className="text-sm text-slate-600 mt-1">Add image and video URLs to make listing more attractive.</p>
+      </div>
+
       {/* Images */}
       <div className="space-y-4">
-        <FormLabel className="text-gray-900 font-semibold text-lg">Property Images (URLs) *</FormLabel>
-        <div className="border-2 border-dashed border-gray-400 rounded-lg p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
-          <Image className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-700 mb-4 font-medium">Add at least one image URL for the property</p>
+        <FormLabel className="text-slate-900 font-semibold text-lg">Property Images (URLs) *</FormLabel>
+        <div className="border-2 border-dashed border-cyan-200 rounded-xl p-8 text-center bg-cyan-50/40 hover:bg-cyan-50 transition-colors">
+          <Image className="w-12 h-12 text-cyan-600 mx-auto mb-4" />
+          <p className="text-slate-700 mb-4 font-medium">Add at least one image URL for the property</p>
 
           <div className="flex gap-2 items-center justify-center">
             <Input
               placeholder="https://example.com/image.jpg"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              className="max-w-lg bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+              className={inputClass}
             />
             <Button
               type="button"
-              variant="outline"
               onClick={addImage}
-              className="bg-gray-100 border-gray-400 text-gray-900 hover:bg-gray-200 font-medium"
+              className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-medium"
             >
               <Upload className="w-4 h-4 mr-2" />
               Add Image
@@ -84,11 +90,11 @@ const MediaUploadStep = ({ form }: MediaUploadStepProps) => {
         </div>
 
         {images.length > 0 && (
-          <div className="bg-gray-100 rounded-lg p-4 border border-gray-300">
-            <p className="text-gray-900 mb-2 font-semibold">Images:</p>
+          <div className="bg-cyan-50/50 rounded-xl p-4 border border-cyan-100">
+            <p className="text-slate-900 mb-2 font-semibold">Images:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {images.map((url: string, idx: number) => (
-                <div key={idx} className="flex items-center justify-between bg-gray-200 rounded p-2 text-sm text-gray-900 font-medium">
+                <div key={idx} className="flex items-center justify-between bg-white rounded-lg p-2 text-sm text-slate-900 font-medium border border-cyan-100">
                   <span className="truncate">{url}</span>
                   <Button type="button" variant="ghost" onClick={() => removeImage(idx)} className="text-red-600 hover:text-red-700">
                     <Trash2 className="w-4 h-4" />
@@ -102,23 +108,22 @@ const MediaUploadStep = ({ form }: MediaUploadStepProps) => {
 
       {/* Videos */}
       <div className="space-y-4">
-        <FormLabel className="text-gray-900 font-semibold text-lg">Property Videos (URLs, optional)</FormLabel>
-        <div className="border-2 border-dashed border-gray-400 rounded-lg p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
-          <Video className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-700 mb-4 font-medium">Add video tour URLs if available</p>
+        <FormLabel className="text-slate-900 font-semibold text-lg">Property Videos (URLs, optional)</FormLabel>
+        <div className="border-2 border-dashed border-cyan-200 rounded-xl p-8 text-center bg-cyan-50/40 hover:bg-cyan-50 transition-colors">
+          <Video className="w-12 h-12 text-cyan-600 mx-auto mb-4" />
+          <p className="text-slate-700 mb-4 font-medium">Add video tour URLs if available</p>
 
           <div className="flex gap-2 items-center justify-center">
             <Input
               placeholder="https://example.com/video.mp4"
               value={videoUrl}
               onChange={(e) => setVideoUrl(e.target.value)}
-              className="max-w-lg bg-gray-100 border-gray-400 text-gray-900 placeholder:text-gray-600 focus:bg-white focus:border-blue-500 font-medium"
+              className={inputClass}
             />
             <Button
               type="button"
-              variant="outline"
               onClick={addVideo}
-              className="bg-gray-100 border-gray-400 text-gray-900 hover:bg-gray-200 font-medium"
+              className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-medium"
             >
               <Upload className="w-4 h-4 mr-2" />
               Add Video
@@ -140,11 +145,11 @@ const MediaUploadStep = ({ form }: MediaUploadStepProps) => {
         </div>
 
         {videos.length > 0 && (
-          <div className="bg-gray-100 rounded-lg p-4 border border-gray-300">
-            <p className="text-gray-900 mb-2 font-semibold">Videos:</p>
+          <div className="bg-cyan-50/50 rounded-xl p-4 border border-cyan-100">
+            <p className="text-slate-900 mb-2 font-semibold">Videos:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {videos.map((url: string, idx: number) => (
-                <div key={idx} className="flex items-center justify-between bg-gray-200 rounded p-2 text-sm text-gray-900 font-medium">
+                <div key={idx} className="flex items-center justify-between bg-white rounded-lg p-2 text-sm text-slate-900 font-medium border border-cyan-100">
                   <span className="truncate">{url}</span>
                   <Button type="button" variant="ghost" onClick={() => removeVideo(idx)} className="text-red-600 hover:text-red-700">
                     <Trash2 className="w-4 h-4" />

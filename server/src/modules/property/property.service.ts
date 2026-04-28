@@ -29,7 +29,7 @@ export class PropertyService {
 
   // Search properties and log history
   static async searchProperties(
-    userId: Types.ObjectId,
+    userId: Types.ObjectId | undefined,
     searchQuery: {
       location?: string;
       propertyType?: string;
@@ -60,13 +60,15 @@ export class PropertyService {
 
     const results = await PropertyModel.find(query);
 
-    // Save search history
-    await SearchHistoryModel.create({
-      userId,
-      searchQuery,
-      resultsCount: results.length,
-      coinsDeducted: 1, // Example: deduct 1 coin per search
-    });
+    // Save search history only for authenticated users
+    if (userId) {
+      await SearchHistoryModel.create({
+        userId,
+        searchQuery,
+        resultsCount: results.length,
+        coinsDeducted: 1,
+      });
+    }
 
     return results;
   }
