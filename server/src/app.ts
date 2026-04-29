@@ -26,9 +26,9 @@ import userRoutes from './modules/user/user.route';
 import propertyRoutes from './modules/property/property.route';
 // import walletRoutes from './modules/auth/wallet.routes';
 
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/properties', propertyRoutes);
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+app.use('/properties', propertyRoutes);
 // app.use('/api/wallet', walletRoutes);
 
 // Health check
