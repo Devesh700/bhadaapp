@@ -90,6 +90,7 @@ const PropertyView = () => {
   }
 
   const contactUnlocked = !(property as any).contactLocked;
+  const unlockCost = (property as any).contactUnlockCost ?? 10;
 
   const amenityIcons: { [key: string]: any } = {
     "Parking": Car,
@@ -98,6 +99,26 @@ const PropertyView = () => {
     "Gym": Dumbbell,
     "Swimming Pool": Waves,
     "Garden": Home
+  };
+
+  const getPostedDaysAgo = (dateString: Date | string) => {
+    const postedDate = new Date(dateString);
+    const now = new Date();
+    const yearDiff = now.getFullYear() - postedDate.getFullYear();
+    if (yearDiff > 0) return `${yearDiff} year${yearDiff > 1 ? 's' : ''} ago`;
+    const monthDiff = now.getMonth() - postedDate.getMonth();
+    if (monthDiff > 0) return `${monthDiff} month${monthDiff > 1 ? 's' : ''} ago`;
+    const timeDiff = now.getTime() - postedDate.getTime();
+    if (timeDiff < 1000 * 60 * 60) {
+      const minutesAgo = Math.floor(timeDiff / (1000 * 60));
+      return `${minutesAgo} minute${minutesAgo !== 1 ? 's' : ''} ago`;
+    }
+    if (timeDiff < 1000 * 60 * 60 * 24) {
+      const hoursAgo = Math.floor(timeDiff / (1000 * 60 * 60));
+      return `${hoursAgo} hour${hoursAgo !== 1 ? 's' : ''} ago`;
+    }
+    const daysAgo = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    return `${daysAgo} day${daysAgo !== 1 ? 's' : ''} ago`;
   };
 
   return (
@@ -263,7 +284,7 @@ const PropertyView = () => {
                           className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg"
                         >
                           <Coins className="w-4 h-4 mr-2" />
-                          Unlock for 10 Coins
+                          Unlock for {unlockCost} Coins
                         </Button>
                       </div>
                     ) : (
@@ -309,7 +330,7 @@ const PropertyView = () => {
                   <div className="mt-6 pt-4 border-t border-gray-200">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Calendar className="w-4 h-4" />
-                      <span className="text-sm">Posted 5 days ago</span>
+                      <span className="text-sm">Posted {getPostedDaysAgo(property.createdAt)} ago</span>
                     </div>
                   </div>
                 </CardContent>

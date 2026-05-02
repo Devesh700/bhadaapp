@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PropertyService } from "./property.service";
 import { Types } from "mongoose";
+import { PropertyModel } from "./property.model";
 
 export class PropertyController {
   static async createProperty(req: Request, res: Response) {
@@ -21,7 +22,11 @@ export class PropertyController {
 
   static async getPropertyById(req: Request, res: Response) {
     try {
-      const property = await PropertyService.getPropertyById(req.params.id, req.user?._id as string | undefined);
+      const property = await PropertyService.getPropertyById(
+        req.params.id,
+        req.user?._id ? String(req.user._id) : undefined,
+        req.user?.role as string | undefined
+      );
       if (!property) return res.status(404).json({ message: "Not found" });
       res.json({success:true, data:property});
     } catch (error: any) {
@@ -32,7 +37,7 @@ export class PropertyController {
   static async unlockContact(req: Request, res: Response) {
     try {
         if(!req.user) return res.status(401).json({message:"Unauthorized"})
-      const result = await PropertyService.unlockContact(req.params.id, req.user._id as string);
+      const result = await PropertyService.unlockContact(req.params.id, String(req.user._id));
       res.json(result);
     } catch (error: any) {
       res.status(400).json({ message: error.message });
@@ -80,10 +85,7 @@ export class PropertyController {
         if(!req.user ) {
             return res.status(401).json({message:"Unauthorized"})
         }
-      const results = await PropertyService.searchProperties(
-        req.user._id as Types.ObjectId,
-        req.body
-      );
+      const results = await PropertyModel.find({ owner: req.user._id }).sort({ createdAt: -1 }).lean();
       res.json({success:true,data:results});
     } catch (error: any) {
       res.status(500).json({ message: error.message });

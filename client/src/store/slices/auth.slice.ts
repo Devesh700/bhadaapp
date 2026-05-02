@@ -40,7 +40,6 @@ const authSlice = createSlice({
       state.error = null;
       state.dailyLoginReward = null;
       apiService.removeAuthToken();
-      window.location.href = '/';
     },
     clearError: (state) => {
       state.error = null;

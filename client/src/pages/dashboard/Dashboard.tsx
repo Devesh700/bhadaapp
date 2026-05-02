@@ -35,11 +35,9 @@ const Dashboard = () => {
         if (user) {
             setUserData(user);
         } else if (!isAuthenticated && !isLoading) {
-            navigate("/");
-            // dispatch(showAuthModal());
-            navigate(-1);
+            navigate("/", { replace: true });
         }
-    }, [user]);
+    }, [user, isAuthenticated, isLoading, navigate]);
 
     const handleLogout = () => {
          
@@ -86,6 +84,13 @@ const Dashboard = () => {
             gradient: "from-blue-500 to-indigo-500",
             description: "Account Settings"
         },
+        {
+            value: 'your-properties',
+            label:"Your Property",
+            icon: House,
+            gradient: "from-blue-500 to-green-500",
+            description: "View Your Properties"
+        },
         ...(userData?.role === "admin" ? [
             {
             value: 'upgrade-requests',
@@ -95,16 +100,6 @@ const Dashboard = () => {
             description: "Review Role Upgrades"
         }
     ] : []),
-
-    ...(userData?.role === "vendor" ? [
-            {
-            value: 'your-properties',
-            label:"Your Property",
-            icon: House,
-            gradient: "from-blue-500 to-green-500",
-            description: "View Your Properties"
-        }
-    ] : [])
     ];
 
     return (

@@ -4,6 +4,37 @@ import { PropertyModel, IProperty } from "./property.model";
 import { AnyArray, Types } from "mongoose";
 
 export class PropertyService {
+  private static readonly CONTACT_UNLOCK_COST = 10;
+
+  private static normalizeId(value: unknown): string {
+    if (!value) return "";
+    return String(value);
+  }
+
+  private static isVendorOwner(owner: any): boolean {
+    return owner?.role === "vendor";
+  }
+
+  private static canAccessContact(params: {
+    requesterId?: string;
+    requesterRole?: string;
+    owner: any;
+    contactsUnlockedBy?: Types.ObjectId[];
+  }) {
+    const { requesterId, requesterRole, owner, contactsUnlockedBy } = params;
+    const normalizedRequesterId = PropertyService.normalizeId(requesterId);
+    const isOwner = !!(normalizedRequesterId && owner?._id?.toString() === normalizedRequesterId);
+    const isAdmin = requesterRole === "admin";
+    const isVendorOwnedProperty = PropertyService.isVendorOwner(owner);
+    const isUnlocked = !!(
+      normalizedRequesterId &&
+      contactsUnlockedBy?.some((uid) => uid.toString() === normalizedRequesterId)
+    );
+
+    const hasAccessToContact = isVendorOwnedProperty || isOwner || isAdmin || isUnlocked;
+    return { hasAccessToContact, isVendorOwnedProperty };
+  }
+
   // Create a new property
   static async createProperty(data: Partial<IProperty>): Promise<IProperty> {
     const property = new PropertyModel(data);
@@ -11,24 +42,20 @@ export class PropertyService {
   }
 
   // Get property by ID
-  static async getPropertyById(id: string, requesterId?: string): Promise<any> {
+  static async getPropertyById(id: string, requesterId?: string, requesterRole?: string): Promise<any> {
     const property = await PropertyModel.findById(id).populate("owner", "name email phone role businessDetails preferences");
     if (!property) return null;
 
     const propertyObj:any = property.toObject();
     const owner = propertyObj.owner as any;
 
-    // Contact visibility rules:
-    // 1. Viewer is owner
-    // 2. Property owner is broker/agent
-    // 3. Viewer has already unlocked contact
-    const isOwner = requesterId && owner._id.toString() === requesterId;
-    const isBroker = owner.businessDetails?.businessType === 'broker' || owner.businessDetails?.businessType === 'real-estate-agent';
-    const isUnlocked = requesterId && property.contactsUnlockedBy?.some(uid => uid.toString() === requesterId);
+    const { hasAccessToContact, isVendorOwnedProperty } = PropertyService.canAccessContact({
+      requesterId,
+      requesterRole,
+      owner,
+      contactsUnlockedBy: property.contactsUnlockedBy,
+    });
 
-    const hasAccessToContact = !!(isOwner || isBroker || isUnlocked);
-
-    // If no access, mask or remove phone/email
     if (!hasAccessToContact) {
       delete propertyObj.owner.phone;
       delete propertyObj.owner.email;
@@ -37,47 +64,47 @@ export class PropertyService {
     return {
       ...propertyObj,
       hasAccessToContact,
-      contactLocked: !hasAccessToContact
+      contactLocked: !hasAccessToContact,
+      contactUnlockCost: isVendorOwnedProperty ? 0 : PropertyService.CONTACT_UNLOCK_COST
     };
   }
 
   static async unlockContact(propertyId: string, userId: string): Promise<{ success: boolean; message: string }> {
     const property = await PropertyModel.findById(propertyId).populate('owner');
     if (!property) throw new Error("Property not found");
+    const normalizedUserId = PropertyService.normalizeId(userId);
 
     const owner = property.owner as any;
-    const isBroker = owner.businessDetails?.businessType === 'broker' || owner.businessDetails?.businessType === 'real-estate-agent';
+    const isVendorOwnedProperty = PropertyService.isVendorOwner(owner);
 
-    if (isBroker) {
-      return { success: true, message: "Contact is free for brokers" };
+    if (isVendorOwnedProperty) {
+      return { success: true, message: "Contact is already unlocked for vendor-listed property" };
     }
 
-    if (property.contactsUnlockedBy?.some(uid => uid.toString() === userId)) {
+    if (property.contactsUnlockedBy?.some(uid => uid.toString() === normalizedUserId)) {
       return { success: true, message: "Contact already unlocked" };
     }
 
-    const user = await SearchHistoryModel.db.model('User').findById(userId); // Accessing UserModel via db if not imported
+    const user = await SearchHistoryModel.db.model('User').findById(normalizedUserId); // Accessing UserModel via db if not imported
     if (!user) throw new Error("User not found");
 
-    const UNLOCK_COST = 5; // Example cost
-
-    if (user.wallet.coins < UNLOCK_COST) {
+    if (user.wallet.coins < PropertyService.CONTACT_UNLOCK_COST) {
       throw new Error("Insufficient coins");
     }
 
     const balanceBefore = user.wallet.coins;
-    user.wallet.coins -= UNLOCK_COST;
-    user.wallet.totalSpent += UNLOCK_COST;
+    user.wallet.coins -= PropertyService.CONTACT_UNLOCK_COST;
+    user.wallet.totalSpent += PropertyService.CONTACT_UNLOCK_COST;
     await user.save();
 
-    property.contactsUnlockedBy.push(new Types.ObjectId(userId));
+    property.contactsUnlockedBy.push(new Types.ObjectId(normalizedUserId));
     await property.save();
 
     // Create transaction record
     await TransactionModel.create({
-      userId: new Types.ObjectId(userId),
+      userId: new Types.ObjectId(normalizedUserId),
       transactionType: 'debit',
-      amount: UNLOCK_COST,
+      amount: PropertyService.CONTACT_UNLOCK_COST,
       reason: 'contact_view',
       referenceId: property._id,
       description: `Unlocked contact for property: ${property.title}`,
@@ -120,7 +147,7 @@ export class PropertyService {
       filters?: Record<string, any>;
     }
   ): Promise<IProperty[]> {
-    const query: any = {};
+    const query: any = {owner:{$ne:userId}};
 
     if (searchQuery.latitude !== undefined && searchQuery.longitude !== undefined) {
       query["location.geo"] = {

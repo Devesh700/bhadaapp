@@ -95,4 +95,7 @@ export interface Property {
   rejectionReason?: string;
   createdAt: Date;
   updatedAt: Date;
+  hasAccessToContact?: boolean;
+  contactLocked?: boolean;
+  contactUnlockCost?: number;
 }
