@@ -12,6 +12,10 @@ export interface IProperty extends Document {
     state: string;
     pincode: string;
     coordinates: { lat: number; lng: number };
+    geo?: {
+      type: 'Point';
+      coordinates: [number, number]; // [lng, lat]
+    };
   };
   specifications: {
     area: number;
@@ -33,6 +37,7 @@ export interface IProperty extends Document {
   contactViewCount: number;
   whatsappContactCount: number;
   rejectionReason?: string;
+  contactsUnlockedBy: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -50,6 +55,10 @@ const PropertySchema = new Schema<IProperty>(
       state: String,
       pincode: String,
       coordinates: { lat: Number, lng: Number },
+      geo: {
+        type: { type: String, enum: ['Point'], default: 'Point' },
+        coordinates: { type: [Number], default: [0, 0] }, // [lng, lat]
+      },
     },
     specifications: {
       area: Number,
@@ -71,8 +80,23 @@ const PropertySchema = new Schema<IProperty>(
     contactViewCount: { type: Number, default: 0 },
     whatsappContactCount: { type: Number, default: 0 },
     rejectionReason: String,
+    contactsUnlockedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 );
+
+// Pre-save hook to sync geo field from coordinates
+PropertySchema.pre('save', function (next) {
+  if (this.location && this.location.coordinates) {
+    this.location.geo = {
+      type: 'Point',
+      coordinates: [this.location.coordinates.lng, this.location.coordinates.lat],
+    };
+  }
+  next();
+});
+
+// Add 2dsphere index for geospatial queries
+PropertySchema.index({ "location.geo": "2dsphere" });
 
 export const PropertyModel = model<IProperty>('Property', PropertySchema);

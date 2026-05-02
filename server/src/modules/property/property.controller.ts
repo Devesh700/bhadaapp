@@ -10,7 +10,8 @@ export class PropertyController {
         }
       const property = await PropertyService.createProperty({
         ...req.body,
-        owner: req.user?._id, // assuming req.user is injected by auth middleware
+        owner: req.user?._id,
+        isVerified: req.user.isBusinessVerified || false, // Auto-verify if vendor is verified
       });
       res.status(201).json(property);
     } catch (error: any) {
@@ -20,11 +21,21 @@ export class PropertyController {
 
   static async getPropertyById(req: Request, res: Response) {
     try {
-      const property = await PropertyService.getPropertyById(req.params.id);
+      const property = await PropertyService.getPropertyById(req.params.id, req.user?._id as string | undefined);
       if (!property) return res.status(404).json({ message: "Not found" });
       res.json({success:true, data:property});
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async unlockContact(req: Request, res: Response) {
+    try {
+        if(!req.user) return res.status(401).json({message:"Unauthorized"})
+      const result = await PropertyService.unlockContact(req.params.id, req.user._id as string);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
     }
   }
 

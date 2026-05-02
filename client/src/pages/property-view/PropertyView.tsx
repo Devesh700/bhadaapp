@@ -15,8 +15,9 @@ import {
 import { selectUser } from "@/store/selectors/auth.selector";
 import { getMe } from "@/store/thunks/auth.thunk";
 
+import propertyService from "@/store/services/property.service";
+
 const PropertyView = () => {
-  debugger
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -24,61 +25,56 @@ const PropertyView = () => {
   const { selectedProperty: property, loading } = useAppSelector((state) => state.property);
   const user = useAppSelector(selectUser);
 
-  const [contactUnlocked, setContactUnlocked] = useState(false);
-  const [userCoins, setUserCoins] = useState(0);
+  const [isUnlocking, setIsUnlocking] = useState(false);
 
   useEffect(() => {
-    debugger
     if (id) {
       dispatch(getProperty(id));
     }
-
-    // Fetch user auth info from localStorage
-    // const authData = localStorage.getItem("user_auth") || localStorage.getItem("owner_auth");
-    // if (authData) {
-    //   const userData = JSON.parse(authData);
-    //   setUserCoins(userData.coins || 0);
-    // }
     if(!user) {
         dispatch(getMe());
     }
   }, [dispatch, id]);
 
-  useEffect( () => {
-    if(user?._id === property?.owner?._id) {
-        setContactUnlocked(true);
-    }
-  },[user,property])
-
-  const handleUnlockContact = () => {
-    if (user?.wallet?.coins < 10) {
+  const handleUnlockContact = async () => {
+    if (!user) {
       toast({
-        title: "Insufficient Coins",
-        description: "You need at least 10 coins to unlock contact details.",
+        title: "Authentication Required",
+        description: "Please login to unlock contact details.",
         variant: "destructive",
       });
       return;
     }
 
-    // Deduct coins in localStorage
-    const authData = localStorage.getItem("user_auth") || localStorage.getItem("owner_auth");
-    if (authData) {
-      const userData = JSON.parse(authData);
-      userData.coins = (userData.coins || 0) - 10;
+    if (!id) return;
 
-      if (localStorage.getItem("user_auth")) {
-        localStorage.setItem("user_auth", JSON.stringify(userData));
+    try {
+      setIsUnlocking(true);
+      const response = await propertyService.unlockContact(id);
+      
+      if (response.success) {
+        toast({
+          title: "Contact Unlocked!",
+          description: response.message || "You can now view the owner's contact details.",
+        });
+        // Refresh property and user data
+        dispatch(getProperty(id));
+        dispatch(getMe());
       } else {
-        localStorage.setItem("owner_auth", JSON.stringify(userData));
+        toast({
+          title: "Unlock Failed",
+          description: response.message || "Could not unlock contact.",
+          variant: "destructive",
+        });
       }
-
-      setUserCoins(userData.coins);
-      setContactUnlocked(true);
-
+    } catch (error: any) {
       toast({
-        title: "Contact Unlocked!",
-        description: "You can now view the owner's contact details.",
+        title: "Error",
+        description: error.response?.data?.message || "An unexpected error occurred.",
+        variant: "destructive",
       });
+    } finally {
+      setIsUnlocking(false);
     }
   };
 
@@ -92,6 +88,8 @@ const PropertyView = () => {
       </Layout>
     );
   }
+
+  const contactUnlocked = !(property as any).contactLocked;
 
   const amenityIcons: { [key: string]: any } = {
     "Parking": Car,

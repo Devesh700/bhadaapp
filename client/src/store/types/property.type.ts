@@ -46,6 +46,9 @@ export interface SearchQuery {
   location?: string;
   propertyType?: string;
   priceRange?: { min?: number; max?: number };
+  latitude?: number;
+  longitude?: number;
+  radius?: number;
   filters?: Record<string, any>;
 }
 

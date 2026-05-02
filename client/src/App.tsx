@@ -48,17 +48,17 @@ const App = () => (
               <Route
                 path="/list-property"
                 element={
-                  <RoleProtectedRoute allowedRoles={["vendor"]}>
+                  // <RoleProtectedRoute allowedRoles={["vendor"]}>
                     <CreatePropertyWizard />
-                  </RoleProtectedRoute>
+                  // </RoleProtectedRoute>
                 }
               />
               <Route
                 path="/create-property"
                 element={
-                  <RoleProtectedRoute allowedRoles={["vendor"]}>
+                  // <RoleProtectedRoute allowedRoles={["vendor"]}>
                     <CreatePropertyWizard />
-                  </RoleProtectedRoute>
+                  // </RoleProtectedRoute>
                 }
               />
               <Route path="/vendor/login" element={<VendorAuth />} />

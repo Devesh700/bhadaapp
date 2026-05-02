@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { stat } from "fs";
 
 const PropertyList = () => {
   const navigate = useNavigate();

@@ -15,7 +15,10 @@ import AmenitiesStep from "./step-forms/AmenitiesStep";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { createProperty } from "@/store/thunks/property.thunk";
-import { useAppDispatch } from "@/store/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
+import { propertyTemplates, type PropertyTemplate } from "./propertyTemplates";
+import { applyPropertyTemplate } from "./autofillUtils";
+import { LayoutGrid } from "lucide-react";
 
 // Step configuration remains the same; step internals will be updated later to match the new schema fields
 const steps = [
@@ -87,10 +90,12 @@ export default function CreatePropertyWizard({
   propertyData,
   onEditComplete,
 }: CreatePropertyWizardProps) {
+  const user = useAppSelector((state) => state.user.user.data);
   const [currentStep, setCurrentStep] = useState(1);
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -108,6 +113,16 @@ export default function CreatePropertyWizard({
       form.reset(propertyData);
     }
   }, [propertyData, form]);
+
+  const handleTemplateSelect = (template: PropertyTemplate) => {
+    // If form is dirty, smart autofill utility will protect user input.
+    applyPropertyTemplate(form, template, (user as any)?.address?.city);
+    setSelectedTemplateId(template.id);
+    toast({
+      title: `${template.label} Template Applied`,
+      description: "Basic fields have been autofilled. You can still modify them.",
+    });
+  };
 
   const progress = (currentStep / steps.length) * 100;
 
@@ -238,7 +253,7 @@ export default function CreatePropertyWizard({
   const CurrentStepComponent = steps[currentStep - 1].component;
 
   return (
-    <div className="min-h-screen bg-primary s">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
@@ -246,7 +261,7 @@ export default function CreatePropertyWizard({
               type="button"
               variant="ghost"
               onClick={() => navigate(-1)}
-              className="text-slate-700 hover:bg-cyan-100 hover:text-slate-900"
+              className="text-foreground hover:bg-muted hover:text-foreground"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Back
@@ -254,11 +269,11 @@ export default function CreatePropertyWizard({
           </div>
 
           {/* Header */}
-          <div className="text-center mb-8 bg-white/80 rounded-2xl border border-cyan-100 shadow-sm px-6 py-8">
-            <h1 className="text-4xl font-bold text-slate-900 mb-4">
+          <div className="text-center mb-8 bg-card/80 rounded-2xl border border-border shadow-sm px-6 py-8">
+            <h1 className="text-4xl font-bold text-foreground mb-4">
               {editMode ? "Edit Your Property" : "List Your Property"}
             </h1>
-            <p className="text-slate-600 text-lg font-medium">
+            <p className="text-muted-foreground text-lg font-medium">
               {editMode ? "Update your property details" : "Complete all steps to list your property on Bhada.in"}
             </p>
           </div>
@@ -266,18 +281,48 @@ export default function CreatePropertyWizard({
           {/* Progress */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-slate-900">
+              <h2 className="text-xl font-semibold text-foreground">
                 Step {currentStep} of {steps.length}: {steps[currentStep - 1].title}
               </h2>
-              <span className="text-slate-700 font-medium">{Math.round(progress)}% Complete</span>
+              <span className="text-muted-foreground font-medium">{Math.round(progress)}% Complete</span>
             </div>
             <Progress value={progress} className="h-3" />
           </div>
 
+          {/* Template Selection (Only on first step and not in edit mode) */}
+          {!editMode && currentStep === 1 && (
+            <div className="mb-8 p-6 bg-blue-50/50 rounded-2xl border border-blue-100 shadow-sm">
+              <div className="flex items-center gap-2 mb-4 text-blue-800">
+                <LayoutGrid className="w-5 h-5" />
+                <h3 className="font-semibold">Quick Start with Templates</h3>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {propertyTemplates.map((template) => (
+                  <Button
+                    key={template.id}
+                    type="button"
+                    variant={selectedTemplateId === template.id ? "default" : "outline"}
+                    onClick={() => handleTemplateSelect(template)}
+                    className={`rounded-xl h-auto py-3 flex flex-col gap-1 transition-all duration-300 ${
+                      selectedTemplateId === template.id 
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md scale-105' 
+                        : 'bg-white border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-400'
+                    }`}
+                  >
+                    <span className="font-bold">{template.label}</span>
+                  </Button>
+                ))}
+              </div>
+              <p className="mt-4 text-[10px] text-blue-600/70 text-center italic text-balance">
+                Selecting a template will auto-fill typical values (Area, Beds, Baths, Amenities) without overwriting what you've already typed.
+              </p>
+            </div>
+          )}
+
           {/* Form */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="bg-white/95 backdrop-blur rounded-2xl p-8 border border-cyan-100 shadow-lg">
+              <div className="bg-card/95 backdrop-blur rounded-2xl p-8 border border-border shadow-lg">
                 {currentStep === steps.length ? (
                   <AmenitiesStep
                     form={form}
@@ -297,7 +342,7 @@ export default function CreatePropertyWizard({
                     variant="outline"
                     onClick={prevStep}
                     disabled={currentStep === 1}
-                    className="bg-white border-cyan-300 text-slate-700 hover:bg-cyan-50 font-medium"
+                    className="bg-card border-border text-foreground hover:bg-muted font-medium"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Previous
@@ -306,7 +351,7 @@ export default function CreatePropertyWizard({
                   <Button
                     type="button"
                     onClick={nextStep}
-                    className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-medium shadow-md"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-md"
                   >
                     Next
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -321,7 +366,7 @@ export default function CreatePropertyWizard({
                     variant="outline"
                     onClick={prevStep}
                     disabled={isSubmitting}
-                    className="bg-white border-cyan-300 text-slate-700 hover:bg-cyan-50 font-medium"
+                    className="bg-card border-border text-foreground hover:bg-muted font-medium"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Previous
@@ -335,16 +380,16 @@ export default function CreatePropertyWizard({
 
       {/* Review Dialog (preserved, not auto-opened) */}
       <Dialog open={showReviewDialog} onOpenChange={() => {}}>
-        <DialogContent className="bg-white border-cyan-100 text-slate-800">
+        <DialogContent className="bg-card border-border text-foreground">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-slate-900">
-              <Clock className="w-5 h-5 text-cyan-500" />
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <Clock className="w-5 h-5 text-primary" />
               Property Under Review
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-6">
-            <div className="animate-spin w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-slate-700">
+            <div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-muted-foreground">
               Your property listing is being reviewed by our team. You'll be notified once it's approved.
             </p>
           </div>
@@ -376,26 +421,26 @@ function SuccessDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="bg-white border-cyan-100 text-slate-800">
+      <DialogContent className="bg-card border-border text-foreground">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-slate-900">
-            <CheckCircle className="w-5 h-5 text-green-500" />
+          <DialogTitle className="flex items-center gap-2 text-foreground">
+            <CheckCircle className="w-5 h-5 text-primary" />
             {editMode ? "Property Updated Successfully!" : "Property Listed Successfully!"}
           </DialogTitle>
         </DialogHeader>
         <div className="text-center py-6">
           {!editMode && (
-            <div className="bg-gradient-to-r from-cyan-500 to-sky-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl font-bold text-white">+10</span>
+            <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl font-bold text-primary-foreground">+10</span>
             </div>
           )}
-          <h3 className="text-xl font-semibold mb-2 text-slate-900">Congratulations!</h3>
-          <p className="text-slate-700 mb-4">
+          <h3 className="text-xl font-semibold mb-2 text-foreground">Congratulations!</h3>
+          <p className="text-muted-foreground mb-4">
             {editMode
               ? "Your property has been successfully updated and is under review."
               : "Your property has been successfully listed and 10 coins have been added to your wallet."}
           </p>
-          <Button onClick={onContinue} className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-medium">
+          <Button onClick={onContinue} className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
             Continue
           </Button>
         </div>

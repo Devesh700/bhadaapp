@@ -6,9 +6,12 @@ const router = Router();
 
 // Property CRUD
 router.post("/", authMiddleware, PropertyController.createProperty);
-router.get("/:id", PropertyController.getPropertyById);
+router.get("/:id", optionalAuthMiddleware, PropertyController.getPropertyById);
 router.put("/:id", authMiddleware, PropertyController.updateProperty);
 router.delete("/:id", authMiddleware, PropertyController.deleteProperty);
+
+// Unlock contact
+router.post("/:id/unlock", authMiddleware, PropertyController.unlockContact);
 
 // Search + history
 router.post("/search", optionalAuthMiddleware, PropertyController.searchProperties);

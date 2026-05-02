@@ -1,4 +1,4 @@
-import { StringifyOptions } from "querystring";
+
 import { IRequestStatus, IStatus } from ".";
 
 export interface IUser {

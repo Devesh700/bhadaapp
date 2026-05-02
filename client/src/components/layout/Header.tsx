@@ -264,13 +264,13 @@ const Header = () => {
                 Buy
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              {isAuthenticated && user?.role === "vendor" && (
+              {isAuthenticated && (
                 <Link 
                   to="/create-property" 
                   className="text-blue-200 hover:text-white font-medium transition-colors duration-200 relative group"
                   style={{ outline: 'none', boxShadow: 'none' }}
                 >
-                  List Property
+                  List Property1
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               )}
@@ -342,7 +342,7 @@ const Header = () => {
                 >
                   Buy
                 </Link>
-                {isAuthenticated && user?.role === "vendor" && (
+                {isAuthenticated  && (
                   <Link 
                     to="/create-property" 
                     className="text-blue-200 hover:text-white font-medium py-2 px-3 rounded-lg hover:bg-white/10 transition-all duration-200"

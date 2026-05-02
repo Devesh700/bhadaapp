@@ -80,7 +80,7 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-primary s">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Modern Sidebar */}

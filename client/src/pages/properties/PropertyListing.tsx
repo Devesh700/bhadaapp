@@ -19,6 +19,7 @@ import {
   Calendar,
   Key,
   SlidersHorizontal,
+  MapPin,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import OwnerRegistrationModal from "@/components/auth/OwnerRegistrationModal";
@@ -47,12 +48,32 @@ const Properties = () => {
   const [priceRange, setPriceRange] = useState<[number, number]>([10000, 100000]);
   const [selectedPropertyType, setSelectedPropertyType] = useState(""); // can be rent/sale/commercial OR category
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [radius, setRadius] = useState(10); // Default 10km
   const [selectedPincode, setSelectedPincode] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [keyword, setKeyword] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("price-asc");
   const [filteredProperties, setFilteredProperties] = useState<any[]>([]);
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
+
+  // Get user location
+  const handleGetLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserCoords({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+          setSelectedLocation("Current Location");
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    }
+  };
 
   // Initial results load
   useEffect(() => {
@@ -63,7 +84,7 @@ const Properties = () => {
       filters: {},
     };
     dispatch(searchProperties(initialQuery as any) as any);
-  }, [dispatch]); // run once [web:74][web:77]
+  }, [dispatch]);
 
   // Map store results to card items
   useEffect(() => {
@@ -76,7 +97,10 @@ const Properties = () => {
       const isPropertyType = RENT_TYPES.includes(params.type as any);
       const isCategoryType = CATEGORY_TYPES.includes(params.type as any);
       const query = {
-        location: selectedLocation || undefined,
+        location: selectedLocation === "Current Location" ? undefined : selectedLocation || undefined,
+        latitude: userCoords?.lat,
+        longitude: userCoords?.lng,
+        radius: userCoords ? radius : undefined,
         propertyType: isPropertyType ? params.type : undefined,
         priceRange: { min: priceRange[0], max: priceRange[1] },
         filters: {
@@ -108,7 +132,10 @@ const Properties = () => {
     const isCategoryType = CATEGORY_TYPES.includes(selectedPropertyType as any);
 
     const query = {
-      location: selectedLocation || undefined,
+      location: selectedLocation === "Current Location" ? undefined : selectedLocation || undefined,
+      latitude: userCoords?.lat,
+      longitude: userCoords?.lng,
+      radius: userCoords ? radius : undefined,
       propertyType: isPropertyType ? selectedPropertyType : undefined,
       priceRange: { min: priceRange[0], max: priceRange[1] },
       filters: {
@@ -200,14 +227,48 @@ const Properties = () => {
         <h3 className="font-medium mb-2 text-sm" style={{ color: "rgb(var(--text-graphite))" }}>
           Location
         </h3>
-        <Input
-          placeholder="Enter area or city"
-          value={selectedLocation}
-          onChange={(e) => setSelectedLocation(e.target.value)}
-          className="form-input"
-          style={{ color: "rgb(var(--text-graphite))" }}
-        />
+        <div className="flex gap-2">
+          <Input
+            placeholder="Enter area or city"
+            value={selectedLocation}
+            onChange={(e) => {
+              setSelectedLocation(e.target.value);
+              if (userCoords) setUserCoords(null);
+            }}
+            className="form-input flex-1"
+            style={{ color: "rgb(var(--text-graphite))" }}
+          />
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={(e) => {
+              e.preventDefault();
+              handleGetLocation();
+            }}
+            title="Near Me"
+            className="shrink-0"
+          >
+            <MapPin className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
+
+      {/* Radius */}
+      {userCoords && (
+        <div>
+          <h3 className="font-medium mb-2 text-sm" style={{ color: "rgb(var(--text-graphite))" }}>
+            Search Radius: {radius} km
+          </h3>
+          <Slider
+            value={[radius]}
+            onValueChange={(v: any) => setRadius(v[0])}
+            max={50}
+            min={1}
+            step={1}
+            className="w-full"
+          />
+        </div>
+      )}
 
       {/* Price Range */}
       <div>
@@ -256,7 +317,7 @@ const Properties = () => {
                 onCheckedChange={(checked) => handleAmenityChange(amenity.id, checked as boolean)}
               />
               <label htmlFor={amenity.id} className="flex items-center space-x-2 text-sm cursor-pointer">
-                <amenity.icon className="w-3 h-3" style={{ color: "rgb(var(--cyan-blue))" }} />
+                <amenity.icon className="w-3 h-3 text-primary" />
                 <span style={{ color: "rgb(var(--text-graphite))" }}>{amenity.label}</span>
               </label>
             </div>
@@ -266,8 +327,7 @@ const Properties = () => {
 
       <Button
         onClick={runSearch}
-        className="w-full text-white font-medium"
-        style={{ backgroundColor: "rgb(var(--cyan-blue))" }}
+        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
       >
         Apply Filters
       </Button>
@@ -278,10 +338,7 @@ const Properties = () => {
     <Layout>
       <div className="min-h-screen bg-background">
         {/* Hero */}
-        <section
-          className="relative min-h-[60vh] md:min-h-[70vh] flex items-center"
-          style={{ background: "linear-gradient(135deg, rgb(var(--granite-black)) 0%, rgb(var(--cyan-blue)) 100%)" }}
-        >
+        <section className="relative min-h-[60vh] md:min-h-[70vh] flex items-center bg-foreground">
           <div className="absolute inset-0 bg-black/20" />
 
           <div className="container mx-auto px-4 relative z-10">
@@ -297,19 +354,35 @@ const Properties = () => {
               </h1>
 
               <p className="font-body text-base md:text-lg text-white/90 max-w-2xl mx-auto mb-8 leading-relaxed">
-                Discover verified rentals with transparent pricing and instant booking across India [web:89][web:99].
+                Discover verified rentals with transparent pricing and instant booking across India.
               </p>
 
               {/* Quick Search Bar */}
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-lg max-w-3xl mx-auto border border-white/20">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <Input
-                    type="text"
-                    placeholder="Search location..."
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                    className="bg-white/20 border-white/30 text-white placeholder:text-white/70 rounded-xl"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <div className="md:col-span-2 flex gap-2">
+                    <Input
+                      type="text"
+                      placeholder="Search location..."
+                      value={selectedLocation}
+                      onChange={(e) => {
+                        setSelectedLocation(e.target.value);
+                        if (userCoords) setUserCoords(null);
+                      }}
+                      className="bg-white/20 border-white/30 text-white placeholder:text-white/70 rounded-xl flex-1"
+                    />
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleGetLocation();
+                      }}
+                      className="bg-white/20 border-white/30 text-white hover:bg-white/30 rounded-xl shrink-0"
+                    >
+                      <MapPin className="w-4 h-4" />
+                    </Button>
+                  </div>
                   <Select
                     value=""
                     onValueChange={(val) => {
@@ -327,7 +400,7 @@ const Properties = () => {
                       <SelectItem value="high">₹50K+</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button onClick={runSearch} className="bg-white text-cyan-blue hover:bg-white/90 rounded-xl font-medium">
+                  <Button onClick={runSearch} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-medium">
                     <Search className="w-4 h-4 mr-2" />
                     Search
                   </Button>
@@ -352,7 +425,7 @@ const Properties = () => {
                 <Button
                   onClick={() => setShowOwnerRegistration(true)}
                   size="lg"
-                  className="bg-white text-cyan-blue hover:bg-white/90 px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg"
+                  className="bg-white text-primary hover:bg-white/90 px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg"
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   Book Now
@@ -361,7 +434,7 @@ const Properties = () => {
                   onClick={() => setShowOwnerLogin(true)}
                   variant="outline"
                   size="lg"
-                  className="border-2 border-white text-white hover:bg-white hover:text-cyan-blue px-6 py-3 rounded-xl font-medium transition-all duration-300"
+                  className="border-2 border-white text-white hover:bg-white hover:text-primary px-6 py-3 rounded-xl font-medium transition-all duration-300"
                 >
                   <User className="w-4 h-4 mr-2" />
                   Login
@@ -377,10 +450,7 @@ const Properties = () => {
             {/* Sidebar (desktop) */}
             <div className="hidden lg:block w-full lg:w-72">
               <Card className="sticky top-6 shadow-sm border border-border bg-card">
-                <CardHeader
-                  className="rounded-t-lg pb-4"
-                  style={{ backgroundColor: "rgb(var(--cyan-blue))", color: "white" }}
-                >
+                <CardHeader className="rounded-t-lg pb-4 bg-primary text-primary-foreground">
                   <CardTitle className="flex items-center gap-2 text-lg font-medium">
                     <Filter className="w-4 h-4" />
                     Filters
@@ -406,8 +476,8 @@ const Properties = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <p className="text-sm font-medium" style={{ color: "rgb(var(--text-graphite))" }}>
-                  {loading ? "Loading..." : error ? "Failed to load" : `${sortedProperties.length} rental properties available`} [web:97][web:92]
+                <p className="text-sm font-medium text-foreground">
+                  {loading ? "Loading..." : error ? "Failed to load" : `${sortedProperties.length} rental properties available`}
                 </p>
               </div>
 
@@ -427,7 +497,7 @@ const Properties = () => {
                 <div className="rounded-xl border border-dashed border-gray-300 p-10 text-center bg-gray-50">
                   <h3 className="text-lg font-semibold mb-2">No results found</h3>
                   <p className="text-gray-600 mb-6">
-                    Try adjusting filters or expanding the price range to see more properties [web:92][web:95].
+                    Try adjusting filters or expanding the price range to see more properties.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Button

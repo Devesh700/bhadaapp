@@ -39,6 +39,11 @@ class PropertyService {
     const response = await apiService.post<IRequestStatus<Property>>(`/properties/${id}/increment/${type}`);
     return response.data;
   }
+
+  async unlockContact(id: string): Promise<ApiResponse> {
+    const response = await apiService.post<ApiResponse>(`/properties/${id}/unlock`);
+    return response.data;
+  }
 }
 
 export default new PropertyService();

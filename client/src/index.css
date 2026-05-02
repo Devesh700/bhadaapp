@@ -167,8 +167,7 @@
 
   /* Modern Feature Icons */
   .feature-icon-container {
-    @apply w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mx-auto mb-4;
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    @apply w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-primary text-primary-foreground;
   }
 
   /* Modern Section Headers */
@@ -238,25 +237,16 @@
   }
 }
 
-/* Modern Cyan Gradients */
-.hero-gradient {
-  background: linear-gradient(135deg, #05D1EB 0%, #00B4D8 50%, #0077B6 100%);
-}
-
-.card-gradient {
-  background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)) 100%);
-}
-
-.feature-gradient {
-  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%);
-}
-
+/* Token-based surface helpers */
+.hero-gradient,
+.card-gradient,
+.feature-gradient,
 .premium-gradient {
-  background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--primary)) 100%);
+  background: rgb(var(--card));
 }
 
 .blue-glow {
-  background: radial-gradient(circle at 50% 50%, rgba(5, 209, 235, 0.15) 0%, transparent 50%);
+  background: rgb(var(--primary) / 0.12);
 }
 
 /* Professional Animations */
