@@ -195,7 +195,7 @@
 
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Search, Building2, UserPlus, LogIn, Menu, X, LogOut } from "lucide-react";
 import OwnerLoginModal from "@/components/auth/OwnerLoginModal";
@@ -211,7 +211,12 @@ const Header = () => {
   const user = useAppSelector(selectUser);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
+  const openAuthModal = () => {
+    const redirectPath = `${location.pathname}${location.search}${location.hash}`;
+    dispatch(showAuthModal(redirectPath));
+  };
 
   const handleOwnerAccess = () => {
     const ownerAuth = localStorage.getItem("token");
@@ -224,7 +229,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-gradient-to-br from-blue-900/85 via-blue-800/90 to-blue-900 border-b border-blue-700 shadow-lg sticky top-1 z-50 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-blue-700 bg-gradient-to-br from-blue-900/85 via-blue-800/90 to-blue-900 shadow-lg backdrop-blur-md">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
@@ -288,7 +293,7 @@ const Header = () => {
                 Owner Panel
               </Button>}
               <Button
-                onClick={()=> isAuthenticated ? dispatch(logout()) :dispatch(showAuthModal())}
+                onClick={()=> isAuthenticated ? dispatch(logout()) :openAuthModal()}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 style={{ outline: 'none', boxShadow: 'none' }}
               >
@@ -368,7 +373,7 @@ const Header = () => {
                   </Button>
                   <Button
                     // onClick={()=> navigate("/login")}
-                    onClick={()=> isAuthenticated ? dispatch(logout()) :dispatch(showAuthModal())}
+                    onClick={()=> isAuthenticated ? dispatch(logout()) :openAuthModal()}
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                     style={{ outline: 'none', boxShadow: 'none' }}
                   >

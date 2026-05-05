@@ -10,7 +10,7 @@ import Layout from "@/components/layout/Layout";
 import {
   MapPin, Bed, Bath, Square, Car, Wifi, Shield,
   Dumbbell, Waves, Home, Star, Phone, Mail,
-  User, Coins, Lock, Unlock, Eye, Calendar, Heart
+  User, Coins, Lock, Unlock, Eye, Calendar, Heart, MessageCircle
 } from "lucide-react";
 import { selectUser } from "@/store/selectors/auth.selector";
 import { getMe } from "@/store/thunks/auth.thunk";
@@ -76,6 +76,21 @@ const PropertyView = () => {
     } finally {
       setIsUnlocking(false);
     }
+  };
+
+  const handleWhatsAppClick = async () => {
+    const phone = property?.owner?.phone;
+    if (!phone) return;
+    const digits = String(phone).replace(/\D/g, "");
+    const phoneNumber = digits.length === 10 ? `91${digits}` : digits;
+    const message = encodeURIComponent(`Hi, I am interested in your property: ${property.title}`);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+    if (id) {
+      try {
+        await propertyService.incrementCounter(id, "whatsapp");
+      } catch (_) {}
+    }
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
   if (loading || !property) {
@@ -322,6 +337,15 @@ const PropertyView = () => {
                             Email
                           </Button>
                         </div>
+                        {property.owner.phone && (
+                          <Button
+                            onClick={handleWhatsAppClick}
+                            className="w-full mt-3 bg-[#25D366] hover:bg-[#20ba57] text-white"
+                          >
+                            <MessageCircle className="w-4 h-4 mr-2" />
+                            WhatsApp
+                          </Button>
+                        )}
                       </div>
                     )}
                   </div>

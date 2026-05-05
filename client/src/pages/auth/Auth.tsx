@@ -105,9 +105,11 @@ import { selectIsAuthenticated } from "@/store/selectors/auth.selector";
 import EmailAuth from "./components/EmailAuth";
 import GoogleAuth from "./components/GoogleAuth";
 import { hideAuthModal } from "@/store/slices/partials.slice";
+import { selectAuthRedirectPath } from "@/store/selectors/partial.selector";
 
 const Auth = () => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const authRedirectPath = useAppSelector(selectAuthRedirectPath);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -119,7 +121,7 @@ const Auth = () => {
 
   const handleAuthSuccess = () => {
     dispatch(hideAuthModal())
-    navigate("/dashboard");
+    navigate(authRedirectPath || "/dashboard");
     
   };
 
