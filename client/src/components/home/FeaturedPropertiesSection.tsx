@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo } from "react";
 import { Star, Zap } from "lucide-react";
 import PropertyCard from "./PropertyCard";
@@ -16,7 +15,7 @@ const FeaturedPropertiesSection = () => {
   // const [properties, setProperties] = useState<Property[]>([]);
   // const [loading, setLoading] = useState(true);
   const dispatch = useAppDispatch();
-  const {properties} = useAppSelector((state)=>state.property)
+  const { properties } = useAppSelector((state) => state.property);
 
   useEffect(() => {
     const loadFeatured = async () => {
@@ -25,26 +24,25 @@ const FeaturedPropertiesSection = () => {
         // const featuredResponse = await propertyService.searchProperties({
         //   filters: {  isFeatured: true },
         // });
-        const featuredResponse = await dispatch(searchProperties(
-          {filters: { isFeatured: true }}
-        ))
-
-       } catch (error) {
+        const featuredResponse = await dispatch(
+          searchProperties({ filters: { isFeatured: true } }),
+        );
+      } catch (error) {
         // setProperties([]);
-        console.error("Error Fetching Properties",error)
+        console.error("Error Fetching Properties", error);
       } finally {
         // setLoading(false);
       }
     };
-    if(!properties?.data?.length)
-    loadFeatured();
+    if (!properties?.data?.length) loadFeatured();
   }, []);
 
   const featuredProperties = useMemo(() => {
-    const sorted = [...properties?.data || []].sort((a, b) => {
+    const sorted = [...(properties?.data || [])].sort((a, b) => {
       const featuredScoreA = a.isFeatured ? 1 : 0;
       const featuredScoreB = b.isFeatured ? 1 : 0;
-      if (featuredScoreA !== featuredScoreB) return featuredScoreB - featuredScoreA;
+      if (featuredScoreA !== featuredScoreB)
+        return featuredScoreB - featuredScoreA;
       return (b.viewCount || 0) - (a.viewCount || 0);
     });
 
@@ -67,14 +65,23 @@ const FeaturedPropertiesSection = () => {
       trending: (item.viewCount || 0) > 100,
     }));
   }, [properties]);
-  
-  const loading = useMemo(()=>(properties?.status === 0 || properties?.status === 1),[properties])
+
+  const loading = useMemo(
+    () => properties?.status === 0 || properties?.status === 1,
+    [properties],
+  );
 
   return (
-    <section className="py-8 sm:py-12 md:py-16 bg-background relative overflow-hidden" aria-label="Featured Properties - Premium Real Estate Listings in India">
+    <section
+      className="py-8 sm:py-12 md:py-16 bg-background relative overflow-hidden"
+      aria-label="Featured Properties - Premium Real Estate Listings in India"
+    >
       {/* Mobile-optimized Background Effects */}
       <div className="absolute top-0 left-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[500px] lg:h-[500px] bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
-      <div className="absolute bottom-0 right-0 w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px] bg-accent/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '3s' }}></div>
+      <div
+        className="absolute bottom-0 right-0 w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px] bg-accent/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-pulse"
+        style={{ animationDelay: "3s" }}
+      ></div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         {/* Mobile-optimized Header */}
@@ -89,24 +96,40 @@ const FeaturedPropertiesSection = () => {
             <span className="text-primary">Featured</span> Properties
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Discover our handpicked selection of premium properties with verified details, competitive pricing, and exceptional amenities across India.
+            Discover our handpicked selection of premium properties with
+            verified details, competitive pricing, and exceptional amenities
+            across India.
           </p>
         </div>
 
         {/* Mobile-responsive properties display */}
         {loading ? (
-          <div className="text-center py-10 text-gray-600">Loading featured properties...</div>
+          <div className="text-center py-10 text-gray-600">
+            Loading featured properties...
+          </div>
         ) : featuredProperties.length === 0 ? (
-          <div className="text-center py-10 text-gray-600">No featured properties available right now.</div>
+          <div className="text-center py-10 text-gray-600">
+            No featured properties available right now.
+          </div>
         ) : (
           <div className="overflow-hidden relative rounded-lg sm:rounded-xl md:rounded-2xl">
-            <div className="flex animate-scroll space-x-3 sm:space-x-4 md:space-x-6" style={{ 
-              animation: 'scroll 40s linear infinite',
-              width: `calc(280px * ${featuredProperties.length * 2})`
-            }}>
-              {[...featuredProperties, ...featuredProperties].map((property, index) => (
-                <PropertyCard key={`${property.id}-${index}`} property={property} index={index} />
+            <div
+              className="flex animate-scroll space-x-3 sm:space-x-4 md:space-x-6"
+              style={{
+                animation: "scroll 40s linear infinite",
+                width: `calc(280px * ${featuredProperties.length * 2})`,
+              }}
+            >
+              {[...featuredProperties].map((property, index) => (
+                <PropertyCard
+                  key={`${property.id}-${index}`}
+                  property={property}
+                  index={index}
+                />
               ))}
+              {/* {[...featuredProperties, ...featuredProperties].map((property, index) => (
+                <PropertyCard key={`${property.id}-${index}`} property={property} index={index} />
+              ))} */}
             </div>
           </div>
         )}

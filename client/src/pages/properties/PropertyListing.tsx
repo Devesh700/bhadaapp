@@ -160,6 +160,8 @@ const Properties = () => {
     return copy;
   }, [filteredProperties, sortKey]);
 
+  console.log(sortedProperties)
+
   // Helper to map API model -> card props
   function mapToCard(p: any) {
     const locationText = [p?.location?.address, p?.location?.city, p?.location?.state].filter(Boolean).join(", ");
@@ -280,7 +282,7 @@ const Properties = () => {
           value={priceRange}
           onValueChange={(v: any) => setPriceRange(v)}
           max={100000}
-          min={5000}
+          min={0}
           step={1000}
           className="w-full"
         />

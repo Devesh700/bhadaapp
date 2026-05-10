@@ -128,6 +128,7 @@ const AdditionalFieldsStep = ({ form }: AdditionalFieldsStepProps) => {
               <Input
                 placeholder="Owner contact/name"
                 {...field}
+                value={field.value ?? ""}
                 className={inputClass}
               />
             </FormControl>

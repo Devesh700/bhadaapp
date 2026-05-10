@@ -37,7 +37,9 @@ export class PropertyService {
 
   // Create a new property
   static async createProperty(data: Partial<IProperty>): Promise<IProperty> {
+    console.log(data)
     const property = new PropertyModel(data);
+
     return await property.save();
   }
 

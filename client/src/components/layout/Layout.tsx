@@ -25,7 +25,7 @@ const Layout = ({ children }: LayoutProps) => {
       <PageLoader isLoading={isLoading} text={loadingText} />
       <div className="flex flex-col min-h-screen w-full bg-white">
         <Header />
-        <main className="flex-grow w-full">
+        <main className="flex-grow w-full pt-20">
           <div className="w-full">
             {children}
           </div>
