@@ -1,13 +1,25 @@
 import { Router } from "express";
 import { authMiddleware, optionalAuthMiddleware } from "../../middlewares/auth";
 import { PropertyController } from "./property.controller";
+import { createImageUploadMiddleware } from "../../middlewares/upload.middleware";
 
 const router = Router();
+const propertyImagesUpload = createImageUploadMiddleware(10);
 
 // Property CRUD
-router.post("/", authMiddleware, PropertyController.createProperty);
+router.post(
+  "/",
+  authMiddleware,
+  propertyImagesUpload.array("images", 10),
+  PropertyController.createProperty
+);
 router.get("/:id", optionalAuthMiddleware, PropertyController.getPropertyById);
-router.put("/:id", authMiddleware, PropertyController.updateProperty);
+router.put(
+  "/:id",
+  authMiddleware,
+  propertyImagesUpload.array("images", 10),
+  PropertyController.updateProperty
+);
 router.delete("/:id", authMiddleware, PropertyController.deleteProperty);
 
 // Unlock contact

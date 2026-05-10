@@ -5,6 +5,7 @@ import PropertyCard from "./PropertyCard";
 import { Property } from "@/store/types/property.type";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { searchProperties } from "@/store/thunks/property.thunk";
+import { resolveMediaUrl } from "@/lib/media";
 
 const formatPrice = (property: Property) => {
   const value = Number(property.price || 0).toLocaleString("en-IN");
@@ -59,7 +60,9 @@ const FeaturedPropertiesSection = () => {
       rating: 4.5,
       views: item.viewCount || 0,
       amenities: item.specifications?.amenities || [],
-      image: item.images?.[0] || "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=600&q=80",
+      image:
+        resolveMediaUrl(item.images?.[0]) ||
+        "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=600&q=80",
       featured: item.isFeatured,
       trending: (item.viewCount || 0) > 100,
     }));

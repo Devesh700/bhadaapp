@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 const initialState = {
     showAuthModal: false,
@@ -9,7 +9,7 @@ const partialSlice = createSlice({
     name: 'partials',
     initialState,
     reducers: {
-        showAuthModal: (state, action: { payload?: string }) => {
+        showAuthModal: (state, action: PayloadAction<string | null>) => {
             state.showAuthModal = true;
             state.authRedirectPath = action.payload || state.authRedirectPath;
         },

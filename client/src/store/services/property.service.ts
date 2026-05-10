@@ -3,10 +3,28 @@ import apiService from "@/services/api";
 import { Property, SearchQuery, ApiResponse } from "@/store/types/property.type"
 import { IRequestStatus } from "../types";
 
+export type PropertyMutationPayload = {
+  data: Partial<Property>;
+  imageFiles?: File[];
+};
+
+const buildPropertyFormData = (payload: PropertyMutationPayload) => {
+  const formData = new FormData();
+  formData.append("payload", JSON.stringify(payload.data));
+
+  const imageFiles = payload.imageFiles || [];
+  for (const file of imageFiles) {
+    formData.append("images", file);
+  }
+
+  return formData;
+};
 
 class PropertyService {
-  async createProperty(data: Partial<Property>): Promise<IRequestStatus<Property>> {
-    const response = await apiService.post<IRequestStatus<Property>>("/properties", data);
+  async createProperty(payload: PropertyMutationPayload): Promise<IRequestStatus<Property>> {
+    const hasFiles = (payload.imageFiles || []).length > 0;
+    const requestBody = hasFiles ? buildPropertyFormData(payload) : payload.data;
+    const response = await apiService.post<IRequestStatus<Property>>("/properties", requestBody);
     return response.data;
   }
 
@@ -15,8 +33,10 @@ class PropertyService {
     return response.data;
   }
 
-  async updateProperty(id: string, data: Partial<Property>): Promise<IRequestStatus<Property>> {
-    const response = await apiService.put<IRequestStatus<Property>>(`/properties/${id}`, data);
+  async updateProperty(id: string, payload: PropertyMutationPayload): Promise<IRequestStatus<Property>> {
+    const hasFiles = (payload.imageFiles || []).length > 0;
+    const requestBody = hasFiles ? buildPropertyFormData(payload) : payload.data;
+    const response = await apiService.put<IRequestStatus<Property>>(`/properties/${id}`, requestBody);
     return response.data;
   }
 

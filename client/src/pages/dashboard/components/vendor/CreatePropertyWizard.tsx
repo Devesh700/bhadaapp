@@ -14,14 +14,14 @@ import MediaUploadStep from "./step-forms/MediaUploadStep";
 import AmenitiesStep from "./step-forms/AmenitiesStep";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { createProperty } from "@/store/thunks/property.thunk";
+import { createProperty, updateProperty } from "@/store/thunks/property.thunk";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { propertyTemplates, type PropertyTemplate } from "./propertyTemplates";
 import { applyPropertyTemplate } from "./autofillUtils";
 import { LayoutGrid } from "lucide-react";
 
 // Step configuration remains the same; step internals will be updated later to match the new schema fields
-const steps = [
+const steps: Array<{ id: number; title: string; component: any }> = [
   { id: 1, title: "Basic Information", component: BasicInformationStep },
   { id: 2, title: "Additional Fields", component: AdditionalFieldsStep },
   { id: 3, title: "Location", component: LocationStep },
@@ -95,6 +95,7 @@ export default function CreatePropertyWizard({
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -111,6 +112,7 @@ export default function CreatePropertyWizard({
   useEffect(() => {
     if (propertyData) {
       form.reset(propertyData);
+      setImageFiles([]);
     }
   }, [propertyData, form]);
 
@@ -149,7 +151,7 @@ export default function CreatePropertyWizard({
           "location.coordinates.lng",
         ];
       case 4:
-        return ["images", "videos"];
+        return ["videos"];
       case 5:
         return ["specifications.amenities"];
       default:
@@ -199,6 +201,15 @@ export default function CreatePropertyWizard({
     }
 
     const data = form.getValues();
+    if (!data.images?.length && imageFiles.length === 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please add at least one property image before submitting.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
     // Local storage draft save (kept from original flow)
     const properties = JSON.parse(localStorage.getItem("vendor_properties") || "[]");
@@ -222,10 +233,30 @@ export default function CreatePropertyWizard({
     }
 
     try {
-      // API call
-      await dispatch(createProperty(data as any)).unwrap();
+      const propertyId =
+        (propertyData as any)?._id ||
+        (propertyData as any)?.id ||
+        (propertyData as any)?.propertyId;
+
+      if (editMode && propertyId) {
+        await dispatch(
+          updateProperty({
+            id: propertyId,
+            data: data as any,
+            imageFiles,
+          }) as any
+        ).unwrap();
+      } else {
+        await dispatch(
+          createProperty({
+            data: data as any,
+            imageFiles,
+          }) as any
+        ).unwrap();
+      }
 
       setShowSuccessDialog(true);
+      setImageFiles([]);
       setIsSubmitting(false);
 
       toast({
@@ -330,7 +361,15 @@ export default function CreatePropertyWizard({
                     isSubmitting={isSubmitting}
                   />
                 ) : (
-                  <CurrentStepComponent form={form} />
+                  currentStep === 4 ? (
+                    <MediaUploadStep
+                      form={form}
+                      imageFiles={imageFiles}
+                      onImageFilesChange={setImageFiles}
+                    />
+                  ) : (
+                    <CurrentStepComponent form={form} />
+                  )
                 )}
               </div>
 

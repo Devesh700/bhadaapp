@@ -85,7 +85,7 @@ export const propertyFormSchema = z.object({
   }),
 
   // Media
-  images: z.array(z.string()).min(1, 'At least one image is required'),
+  images: z.array(z.string()).default([]),
   videos: z.array(z.string()).optional(),
 
   // Backend-managed / optional fields

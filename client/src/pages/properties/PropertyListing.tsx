@@ -28,6 +28,7 @@ import PropertyCard from "@/components/PropertyCard";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { searchProperties } from "@/store/thunks/property.thunk";
 import { useParams } from "react-router-dom";
+import { resolveMediaUrl } from "@/lib/media";
 
 const RENT_TYPES = ["rent", "sale", "commercial"] as const;
 const CATEGORY_TYPES = ["apartment", "house", "plot", "office", "villa", "studio"] as const;
@@ -162,7 +163,7 @@ const Properties = () => {
   // Helper to map API model -> card props
   function mapToCard(p: any) {
     const locationText = [p?.location?.address, p?.location?.city, p?.location?.state].filter(Boolean).join(", ");
-    const firstImage = Array.isArray(p?.images) && p.images.length ? p.images[0] : undefined;
+    const firstImage = Array.isArray(p?.images) && p.images.length ? resolveMediaUrl(p.images[0]) : undefined;
 
     const listingType = p?.propertyType === "sale" || p?.propertyType === "rent" ? p.propertyType : "rent";
     const derivedType = p?.propertyType === "commercial" || p?.category === "office" ? "commercial" : "residential";

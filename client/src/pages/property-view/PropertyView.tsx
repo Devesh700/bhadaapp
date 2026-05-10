@@ -16,6 +16,7 @@ import { selectUser } from "@/store/selectors/auth.selector";
 import { getMe } from "@/store/thunks/auth.thunk";
 
 import propertyService from "@/store/services/property.service";
+import { resolveMediaUrl } from "@/lib/media";
 
 const PropertyView = () => {
   const { id } = useParams<{ id: string }>();
@@ -158,7 +159,7 @@ const PropertyView = () => {
               <Card className="overflow-hidden shadow-xl border-0">
                 <div className="relative">
                   <img 
-                    src={property.images[0]} 
+                    src={resolveMediaUrl(property.images[0])} 
                     alt={property.title}
                     className="w-full h-96 object-cover"
                   />

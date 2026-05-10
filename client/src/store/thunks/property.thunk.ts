@@ -2,8 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import propertyService from "@/store/services/property.service";
 import { Property, SearchQuery } from "@/store/types/property.type"
 import { IRequestStatus } from "../types";
+import { PropertyMutationPayload } from "../services/property.service";
 
-export const createProperty = createAsyncThunk<IRequestStatus<Property>, Partial<Property>>(
+export const createProperty = createAsyncThunk<IRequestStatus<Property>, PropertyMutationPayload>(
   "property/create",
   async (data, { rejectWithValue }) => {
     try {
@@ -25,11 +26,14 @@ export const getProperty = createAsyncThunk<IRequestStatus<Property>, string>(
   }
 );
 
-export const updateProperty = createAsyncThunk<IRequestStatus<Property>, { id: string; data: Partial<Property> }>(
+export const updateProperty = createAsyncThunk<
+  IRequestStatus<Property>,
+  { id: string; data: Partial<Property>; imageFiles?: File[] }
+>(
   "property/update",
-  async ({ id, data }, { rejectWithValue }) => {
+  async ({ id, data, imageFiles }, { rejectWithValue }) => {
     try {
-      return await propertyService.updateProperty(id, data);
+      return await propertyService.updateProperty(id, { data, imageFiles });
     } catch (err: any) {
       return rejectWithValue(err.response?.data || { message: "Failed to update property" });
     }
