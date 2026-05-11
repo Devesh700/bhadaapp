@@ -149,7 +149,7 @@ export class PropertyService {
       filters?: Record<string, any>;
     }
   ): Promise<IProperty[]> {
-    const query: any = {owner:{$ne:userId}};
+    const query: any = {};
 
     if (searchQuery.latitude !== undefined && searchQuery.longitude !== undefined) {
       query["location.geo"] = {
