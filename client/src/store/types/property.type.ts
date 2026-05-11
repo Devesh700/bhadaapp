@@ -60,7 +60,7 @@ export interface ApiResponse<T = any> {
 
 
 export interface Property {
- _id?:string;
+  _id: string | number;
   title: string;
   description: string;
   propertyType: 'rent' | 'sale' | 'commercial';
@@ -72,6 +72,10 @@ export interface Property {
     state: string;
     pincode: string;
     coordinates: { lat: number; lng: number };
+    geo?: {
+      type: 'Point';
+      coordinates: [number, number]; // [lng, lat]
+    };
   };
   specifications: {
     area: number;
@@ -83,7 +87,7 @@ export interface Property {
   };
   images: string[];
   videos?: string[];
-  owner: Partial<IUser>;
+  owner: string | IUser;
   status: 'pending' | 'approved' | 'rejected' | 'sold' | 'rented';
   isPrimeListing: boolean;
   isVerified: boolean;
@@ -93,9 +97,7 @@ export interface Property {
   contactViewCount: number;
   whatsappContactCount: number;
   rejectionReason?: string;
+  contactsUnlockedBy: string[]; // Array of user IDs who unlocked contact
   createdAt: Date;
   updatedAt: Date;
-  hasAccessToContact?: boolean;
-  contactLocked?: boolean;
-  contactUnlockCost?: number;
 }

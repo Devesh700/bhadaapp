@@ -5,6 +5,7 @@ import { Property } from "@/store/types/property.type";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { searchProperties } from "@/store/thunks/property.thunk";
 import { resolveMediaUrl } from "@/lib/media";
+import { mapToCard } from "@/lib/utils";
 
 const formatPrice = (property: Property) => {
   const value = Number(property.price || 0).toLocaleString("en-IN");
@@ -46,24 +47,7 @@ const FeaturedPropertiesSection = () => {
       return (b.viewCount || 0) - (a.viewCount || 0);
     });
 
-    return sorted.slice(0, 10).map((item, index) => ({
-      id: index + 1,
-      name: item.title,
-      location: item.location?.city || "Unknown",
-      pincode: item.location?.pincode || "NA",
-      price: formatPrice(item),
-      type: item.propertyType === "rent" ? "Rental Property" : "Buy Property",
-      bedrooms: item.specifications?.bedrooms ?? null,
-      bathrooms: item.specifications?.bathrooms ?? 0,
-      rating: 4.5,
-      views: item.viewCount || 0,
-      amenities: item.specifications?.amenities || [],
-      image:
-        resolveMediaUrl(item.images?.[0]) ||
-        "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=600&q=80",
-      featured: item.isFeatured,
-      trending: (item.viewCount || 0) > 100,
-    }));
+    return sorted.slice(0, 10).map(mapToCard);
   }, [properties]);
 
   const loading = useMemo(
@@ -122,10 +106,21 @@ const FeaturedPropertiesSection = () => {
             >
               {[...featuredProperties].map((property, index) => (
                 <PropertyCard
-                  key={`${property.id}-${index}`}
-                  property={property}
-                  index={index}
-                />
+                      key={property.id}
+                      id={property.id}
+                      title={property.title}
+                      location={property.location}
+                      price={property.price}
+                      imageUrl={property.imageUrl}
+                      bedrooms={property.bedrooms}
+                      bathrooms={property.bathrooms}
+                      area={property.area}
+                      propertyType={property.propertyType as any}
+                      listingType={property.listingType}
+                      isFurnished={property.isFurnished as any}
+                      tenantPreference={property.tenantPreference}
+                      className="max-w-80"
+                    />
               ))}
               {/* {[...featuredProperties, ...featuredProperties].map((property, index) => (
                 <PropertyCard key={`${property.id}-${index}`} property={property} index={index} />

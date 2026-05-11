@@ -29,6 +29,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { searchProperties } from "@/store/thunks/property.thunk";
 import { useParams } from "react-router-dom";
 import { resolveMediaUrl } from "@/lib/media";
+import { mapToCard } from "@/lib/utils";
 
 const RENT_TYPES = ["rent", "sale", "commercial"] as const;
 const CATEGORY_TYPES = ["apartment", "house", "plot", "office", "villa", "studio"] as const;
@@ -163,40 +164,7 @@ const Properties = () => {
   console.log(sortedProperties)
 
   // Helper to map API model -> card props
-  function mapToCard(p: any) {
-    const locationText = [p?.location?.address, p?.location?.city, p?.location?.state].filter(Boolean).join(", ");
-    const firstImage = Array.isArray(p?.images) && p.images.length ? resolveMediaUrl(p.images[0]) : undefined;
-
-    const listingType = p?.propertyType === "sale" || p?.propertyType === "rent" ? p.propertyType : "rent";
-    const derivedType = p?.propertyType === "commercial" || p?.category === "office" ? "commercial" : "residential";
-
-    const isFurnished =
-      typeof p?.specifications?.furnishing === "string"
-        ? p.specifications.furnishing.toLowerCase().includes("full")
-          ? "fully"
-          : p.specifications.furnishing.toLowerCase().includes("semi")
-          ? "semi"
-          : "unfurnished"
-        : "unfurnished";
-
-    return {
-      id: String(p?.id ?? p?._id ?? ""),
-      title: p?.title ?? "",
-      location: locationText,
-      price: Number(p?.price ?? 0),
-      imageUrl: firstImage,
-      bedrooms: Number(p?.specifications?.bedrooms ?? 0),
-      bathrooms: Number(p?.specifications?.bathrooms ?? 0),
-      area: Number(p?.specifications?.area ?? 0),
-      propertyType: derivedType,
-      listingType,
-      isFurnished,
-      tenantPreference: p?.tenantPreference,
-      pincode: p?.location?.pincode,
-      amenities: Array.isArray(p?.specifications?.amenities) ? p.specifications.amenities : [],
-      createdAt: new Date(p?.createdAt ?? Date.now()).getTime(),
-    };
-  }
+  
 
   const FiltersPanel = (
     <div className="space-y-6">

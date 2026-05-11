@@ -8,89 +8,139 @@
 
 @layer base {
   :root {
-    --background: 255 255 255; /* white */
-    --foreground: 51 51 51; /* granite black */
+    --background: 255 255 255;
+    --foreground: 31 41 55;
 
-    --card: 255 255 255; /* white */
-    --card-foreground: 51 51 51; /* granite black */
+    --card: 255 255 255;
+    --card-foreground: 31 41 55;
 
-    --popover: 255 255 255; /* white */
-    --popover-foreground: 51 51 51; /* granite black */
+    --popover: 255 255 255;
+    --popover-foreground: 31 41 55;
 
-    --primary: 5 209 235; /* cyan blue #05D1EB */
-    --primary-foreground: 255 255 255; /* white */
+    --primary: 255 122 0;
+    --primary-foreground: 255 255 255;
+    --primary-50: 255 247 237;
+    --primary-100: 255 237 213;
+    --primary-200: 254 215 170;
+    --primary-300: 253 186 116;
+    --primary-400: 251 146 60;
+    --primary-500: 255 122 0;
+    --primary-600: 234 88 12;
+    --primary-700: 194 65 12;
+    --primary-800: 154 52 18;
+    --primary-900: 124 45 18;
+    --primary-950: 67 20 7;
+    --primary-deep-50: 255 247 237;
+    --primary-deep-100: 255 237 213;
+    --primary-deep-200: 254 215 170;
+    --primary-deep-300: 253 186 116;
+    --primary-deep-400: 251 146 60;
+    --primary-deep-500: 234 88 12;
+    --primary-deep-600: 194 65 12;
+    --primary-deep-700: 154 52 18;
+    --primary-deep-800: 124 45 18;
+    --primary-deep-900: 102 37 16;
+    --primary-deep-950: 67 20 7;
 
-    --secondary: 240 240 245; /* light gray */
-    --secondary-foreground: 51 51 51; /* granite black */
+    --secondary: 245 245 245;
+    --secondary-foreground: 31 41 55;
 
-    --muted: 247 247 250; /* very light gray */
-    --muted-foreground: 102 102 102; /* medium gray */
+    --muted: 249 250 251;
+    --muted-foreground: 107 114 128;
 
-    --accent: 5 209 235; /* cyan blue #05D1EB */
-    --accent-foreground: 255 255 255; /* white */
+    --accent: 255 159 67;
+    --accent-foreground: 255 255 255;
 
-    --destructive: 229 62 62; /* warm accent red */
-    --destructive-foreground: 255 255 255; /* white */
+    --destructive: 220 38 38;
+    --destructive-foreground: 255 255 255;
 
-    --border: 229 229 234; /* light border */
-    --input: 230 230 230; /* light gray background */
-    --ring: 5 209 235; /* cyan blue */
+    --border: 229 231 235;
+    --input: 243 244 246;
+    --ring: 255 122 0;
 
-    --radius: 8px;
+    --radius: 12px;
 
-    /* Custom theme colors */
-    --granite-black: 51 51 51; /* #333333 */
-    --cyan-blue: 5 209 235; /* #05D1EB */
-    --cyan-blue-light: 5 209 235; /* #05D1EB */
-    --text-graphite: 51 51 51; /* graphite black for text */
+    /* Custom */
+    --brand-orange: 255 122 0;
+    --brand-orange-light: 255 159 67;
+    --brand-dark: 30 30 30;
+    --granite-black: 0 0% 12%;
+    --cyan-blue: 28 100% 50%;
+    --text-primary: 31 41 55;
+    --text-secondary: 75 85 99;
 
+    /* Sidebar */
     --sidebar-background: 255 255 255;
-    --sidebar-foreground: 51 65 85;
-    --sidebar-primary: 5 209 235;
-    --sidebar-primary-foreground: 248 250 252;
-    --sidebar-accent: 241 245 249;
-    --sidebar-accent-foreground: 30 41 59;
-    --sidebar-border: 226 232 240;
-    --sidebar-ring: 5 209 235;
+    --sidebar-foreground: 31 41 55;
+    --sidebar-primary: 255 122 0;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 245 245 245;
+    --sidebar-accent-foreground: 31 41 55;
+    --sidebar-border: 229 231 235;
+    --sidebar-ring: 255 122 0;
   }
 
   .dark {
-    --background: 26 54 93; /* deep navy blue */
-    --foreground: 255 255 255; /* white */
+    --background: 17 17 17;
+    --foreground: 255 255 255;
 
-    --card: 30 58 100; /* darker navy */
-    --card-foreground: 255 255 255; /* white */
+    --card: 28 28 28;
+    --card-foreground: 255 255 255;
 
-    --popover: 30 58 100; /* darker navy */
-    --popover-foreground: 255 255 255; /* white */
+    --popover: 28 28 28;
+    --popover-foreground: 255 255 255;
 
-    --primary: 214 158 46; /* warm gold #d69e2e */
-    --primary-foreground: 26 54 93; /* deep navy blue */
+    --primary: 255 122 0;
+    --primary-foreground: 255 255 255;
+    --primary-50: 255 247 237;
+    --primary-100: 255 237 213;
+    --primary-200: 254 215 170;
+    --primary-300: 253 186 116;
+    --primary-400: 251 146 60;
+    --primary-500: 255 122 0;
+    --primary-600: 234 88 12;
+    --primary-700: 194 65 12;
+    --primary-800: 154 52 18;
+    --primary-900: 124 45 18;
+    --primary-950: 67 20 7;
+    --primary-deep-50: 255 247 237;
+    --primary-deep-100: 255 237 213;
+    --primary-deep-200: 254 215 170;
+    --primary-deep-300: 253 186 116;
+    --primary-deep-400: 251 146 60;
+    --primary-deep-500: 234 88 12;
+    --primary-deep-600: 194 65 12;
+    --primary-deep-700: 154 52 18;
+    --primary-deep-800: 124 45 18;
+    --primary-deep-900: 102 37 16;
+    --primary-deep-950: 67 20 7;
 
-    --secondary: 113 128 150; /* medium gray */
-    --secondary-foreground: 255 255 255; /* white */
+    --secondary: 45 45 45;
+    --secondary-foreground: 255 255 255;
 
-    --muted: 113 128 150; /* medium gray */
-    --muted-foreground: 203 213 224; /* light gray */
+    --muted: 38 38 38;
+    --muted-foreground: 163 163 163;
 
-    --accent: 229 62 62; /* warm accent red */
-    --accent-foreground: 255 255 255; /* white */
+    --accent: 255 159 67;
+    --accent-foreground: 255 255 255;
+    --granite-black: 0 0% 12%;
+    --cyan-blue: 28 100% 50%;
 
-    --destructive: 229 62 62; /* warm accent red */
-    --destructive-foreground: 255 255 255; /* white */
+    --destructive: 220 38 38;
+    --destructive-foreground: 255 255 255;
 
-    --border: 113 128 150; /* medium gray */
-    --input: 113 128 150; /* medium gray */
-    --ring: 214 158 46; /* warm gold */
+    --border: 55 55 55;
+    --input: 38 38 38;
+    --ring: 255 122 0;
 
-    --sidebar-background: 30 41 59;
-    --sidebar-foreground: 226 232 240;
-    --sidebar-primary: 5 209 235;
-    --sidebar-primary-foreground: 15 23 42;
-    --sidebar-accent: 51 65 85;
-    --sidebar-accent-foreground: 248 250 252;
-    --sidebar-border: 51 65 85;
-    --sidebar-ring: 5 209 235;
+    --sidebar-background: 20 20 20;
+    --sidebar-foreground: 255 255 255;
+    --sidebar-primary: 255 122 0;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 38 38 38;
+    --sidebar-accent-foreground: 255 255 255;
+    --sidebar-border: 55 55 55;
+    --sidebar-ring: 255 122 0;
   }
 }
 

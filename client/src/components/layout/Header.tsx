@@ -211,8 +211,8 @@ import {
   selectUser,
 } from "@/store/selectors/auth.selector";
 import { logout } from "@/store/slices/auth.slice";
-import AuthModal from "../auth/AuthModal";
 import { showAuthModal } from "@/store/slices/partials.slice";
+import brandLogo from "@/assets/logo.png"
 
 const Header = () => {
   const [showOwnerLogin, setShowOwnerLogin] = useState(false);
@@ -247,13 +247,14 @@ const Header = () => {
               className="flex items-center space-x-3 group"
               style={{ outline: "none", boxShadow: "none" }}
             >
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              {/* <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <Home className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold font-display">
+              </div> */}
+              {/* <span className="text-2xl font-bold font-display">
                 <span className="text-white">Bhada</span>
                 <span className="text-blue-300">.in</span>
-              </span>
+              </span> */}
+              <img src={brandLogo} alt="Bhada.in" className="w-32 h-auto rounded-lg" />
             </Link>
 
             {/* Desktop Navigation */}

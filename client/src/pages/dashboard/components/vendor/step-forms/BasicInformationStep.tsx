@@ -54,7 +54,7 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
                 </FormControl>
                 <SelectContent className="bg-white border-cyan-100">
                   <SelectItem value="rent" className="text-slate-900 hover:bg-cyan-50 font-medium">Rent</SelectItem>
-                  <SelectItem value="commercial" className="text-slate-900 hover:bg-cyan-50 font-medium">Commercial</SelectItem>
+                  {/* <SelectItem value="commercial" className="text-slate-900 hover:bg-cyan-50 font-medium">Commercial</SelectItem> */}
                   <SelectItem value="sale" className="text-slate-900 hover:bg-cyan-50 font-medium">Sale</SelectItem>
                 </SelectContent>
               </Select>
@@ -79,7 +79,7 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
                   <SelectItem value="apartment" className="text-slate-900 hover:bg-cyan-50 font-medium">Apartment</SelectItem>
                   <SelectItem value="house" className="text-slate-900 hover:bg-cyan-50 font-medium">House</SelectItem>
                   <SelectItem value="plot" className="text-slate-900 hover:bg-cyan-50 font-medium">Plot</SelectItem>
-                  <SelectItem value="office" className="text-slate-900 hover:bg-cyan-50 font-medium">Office</SelectItem>
+                  <SelectItem value="commercial" className="text-slate-900 hover:bg-cyan-50 font-medium">Commercial</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

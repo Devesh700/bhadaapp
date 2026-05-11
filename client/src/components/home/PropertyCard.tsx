@@ -1,110 +1,136 @@
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Bed, Bath, Heart } from "lucide-react";
-import PropertyBadge from "./PropertyBadge";
-import PropertyStats from "./PropertyStats";
-import PropertyAmenities from "./PropertyAmenities";
-
-interface Property {
-  id: number;
-  name: string;
-  location: string;
-  pincode: string;
-  price: string;
-  type: string;
-  bedrooms: number | null;
-  bathrooms: number;
-  rating: number;
-  views: number;
-  amenities: string[];
-  image: string;
-  featured: boolean;
-  trending: boolean;
-}
+import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Heart, MapPin, Bed, Home, Building, Currency } from 'lucide-react';
 
 interface PropertyCardProps {
-  property: Property;
-  index: number;
+  id: string | number;
+  title: string;
+  location: string;
+  price: string | number;
+  imageUrl: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  area?: number;
+  propertyType: 'residential' | 'commercial' | 'short-term' | 'land';
+  listingType: 'rent' | 'sale';
+  isVerified?: boolean;
+  isFurnished?: 'fully' | 'semi' | 'unfurnished';
+  tenantPreference?: 'family' | 'bachelor' | 'couple' | 'any';
+  className?: string;
 }
 
-const PropertyCard = ({ property, index }: PropertyCardProps) => {
+const PropertyCard = ({
+  id,
+  title,
+  location,
+  price,
+  imageUrl,
+  bedrooms,
+  bathrooms,
+  area,
+  propertyType,
+  listingType,
+  isVerified = false,
+  isFurnished,
+  tenantPreference,
+  className
+}: PropertyCardProps) => {
+  
+  const PropertyTypeIcon = propertyType === 'residential' 
+    ? Home 
+    : propertyType === 'commercial' || propertyType === 'short-term'
+    ? Building
+    : Currency;
+  
   return (
-    <Card 
-      key={`${property.id}-${index}`} 
-      className="w-[270px] sm:w-[300px] md:w-[320px] lg:w-[340px] flex-shrink-0 bg-white/95 backdrop-blur-md border border-blue-100/60 hover:shadow-xl transition-all duration-700 transform hover:-translate-y-2 sm:hover:-translate-y-3 hover:scale-105 group relative overflow-hidden"
-      role="article"
-      aria-label={`${property.name} in ${property.location} - ${property.price}`}
-    >
-      {/* Property Image */}
+    <Card className={`group hover:shadow-2xl transition-all duration-500 h-full border-0 bg-white shadow-lg hover:scale-105 ${className || ''}`}>
       <div className="relative">
         <img 
-          src={property.image} 
-          alt={`${property.name} - ${property.type} in ${property.location}`}
-          className="h-32 sm:h-36 md:h-40 w-full object-cover group-hover:scale-110 transition-transform duration-500"
+          src={imageUrl || "https://placehold.co/600x400/e2e8f0/475569?text=Property+Image"}
+          alt={title}
+          className="h-52 w-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-t-lg"
           loading="lazy"
         />
-        
-        {/* Badge System */}
-        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 space-y-1">
-          <PropertyBadge type="propertyType" propertyType={property.type} />
-          <PropertyBadge type="featured" featured={property.featured} />
-        </div>
-
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 space-y-1">
-          <PropertyBadge type="trending" trending={property.trending} />
-          <div className="bg-black/70 text-white p-1 sm:p-1.5 rounded-full hover:bg-black/90 transition-colors cursor-pointer">
-            <Heart className="w-3 h-3 hover:text-blue-400 transition-colors" />
-          </div>
-        </div>
-
-        {/* Enhanced Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent group-hover:from-black/70 transition-all duration-500"></div>
-        
-        {/* Property Stats Overlay */}
-        <PropertyStats views={property.views} rating={property.rating} />
+        <button className="absolute top-4 right-4 p-3 bg-white/90 backdrop-blur-sm rounded-full text-gray-500 hover:text-red-500 hover:scale-110 transition-all duration-300 shadow-lg">
+          <Heart size={18} />
+        </button>
+        {isVerified && (
+          <Badge className="absolute bottom-4 left-4 bg-green-600 hover:bg-green-700 font-medium px-3 py-1 shadow-lg">
+            Verified
+          </Badge>
+        )}
+        <Badge 
+          className={`absolute top-4 left-4 font-medium px-4 py-2 shadow-lg ${
+            listingType === 'rent' 
+              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' 
+              : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'
+          }`}
+        >
+          {listingType === 'rent' ? 'For Rent' : 'For Sale'}
+        </Badge>
       </div>
-
-      <CardContent className="p-3 sm:p-4 md:p-5">
-        {/* Property Title */}
-        <h3 className="text-sm sm:text-base font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-          {property.name}
-        </h3>
+      
+      <CardContent className="p-6">
+        <Link to={`/properties/${listingType}/${id}`}>
+          <h3 className="text-xl font-bold mb-3 hover:text-blue-600 transition-colors line-clamp-2 text-gray-800">
+            {title}
+          </h3>
+        </Link>
         
-        {/* Location */}
-        <div className="flex items-center text-gray-600 mb-2 sm:mb-3">
-          <MapPin className="w-3 h-3 mr-1 text-blue-500 flex-shrink-0" />
-          <span className="text-xs font-medium truncate">{property.location} - {property.pincode}</span>
+        <div className="flex items-center text-gray-600 mb-4">
+          <MapPin size={16} className="mr-2 flex-shrink-0 text-blue-600" />
+          <span className="text-sm line-clamp-1">{location}</span>
         </div>
         
-        {/* Room Details */}
-        {property.bedrooms && (
-          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3 text-xs text-gray-600">
-            <div className="flex items-center gap-1 bg-blue-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
-              <Bed className="w-3 h-3 text-blue-500" />
-              <span className="font-medium">{property.bedrooms} Bed</span>
+        <div className="flex flex-wrap gap-4 text-sm mb-4">
+          {bedrooms !== undefined && (
+            <div className="flex items-center">
+              <Bed size={16} className="mr-1 text-blue-600" />
+              <span className="font-medium">{bedrooms} {bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}</span>
             </div>
-            <div className="flex items-center gap-1 bg-blue-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
-              <Bath className="w-3 h-3 text-blue-500" />
-              <span className="font-medium">{property.bathrooms} Bath</span>
+          )}
+
+          {area !== undefined && (
+            <div className="flex items-center">
+              <PropertyTypeIcon size={16} className="mr-1 text-blue-600" />
+              <span className="font-medium">{area} sq.ft</span>
             </div>
+          )}
+        </div>
+        
+        {(isFurnished || tenantPreference) && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {isFurnished && (
+              <Badge variant="outline" className="text-xs border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100">
+                {isFurnished === 'fully' 
+                  ? 'Fully Furnished' 
+                  : isFurnished === 'semi' 
+                  ? 'Semi-Furnished' 
+                  : 'Unfurnished'}
+              </Badge>
+            )}
+            
+            {tenantPreference && (
+              <Badge variant="outline" className="text-xs capitalize border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100">
+                {tenantPreference === 'any' ? 'All Welcome' : `${tenantPreference} Preferred`}
+              </Badge>
+            )}
           </div>
         )}
-
-        {/* Amenities */}
-        <PropertyAmenities amenities={property.amenities} />
-
-        {/* Price and CTA */}
-        <div className="flex items-center justify-between">
-          <div className="text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-            {property.price}
+        
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+          <div className="font-bold text-xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            ₹{price.toLocaleString()}
+            {listingType === 'rent' && <span className="text-sm font-normal text-gray-500">/month</span>}
           </div>
-          <Button 
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-xs sm:text-sm"
-            aria-label={`View details of ${property.name}`}
+          <Link 
+            to={`/properties/${listingType}/${id}`}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"
           >
             View Details
-          </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

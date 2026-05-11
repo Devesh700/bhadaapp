@@ -1,6 +1,21 @@
 
 import type { Config } from "tailwindcss";
 
+const colorScaleFromVar = (prefix: string) => ({
+	50: `rgb(var(--${prefix}-50) / <alpha-value>)`,
+	100: `rgb(var(--${prefix}-100) / <alpha-value>)`,
+	200: `rgb(var(--${prefix}-200) / <alpha-value>)`,
+	300: `rgb(var(--${prefix}-300) / <alpha-value>)`,
+	400: `rgb(var(--${prefix}-400) / <alpha-value>)`,
+	500: `rgb(var(--${prefix}-500) / <alpha-value>)`,
+	600: `rgb(var(--${prefix}-600) / <alpha-value>)`,
+	700: `rgb(var(--${prefix}-700) / <alpha-value>)`,
+	800: `rgb(var(--${prefix}-800) / <alpha-value>)`,
+	900: `rgb(var(--${prefix}-900) / <alpha-value>)`,
+	950: `rgb(var(--${prefix}-950) / <alpha-value>)`,
+	DEFAULT: `rgb(var(--${prefix}-500) / <alpha-value>)`,
+});
+
 export default {
 	darkMode: ["class"],
 	content: [
@@ -30,6 +45,8 @@ export default {
 				ring: 'rgb(var(--ring))',
 				background: 'rgb(var(--background))',
 				foreground: 'rgb(var(--foreground))',
+				blue: colorScaleFromVar('primary'),
+				indigo: colorScaleFromVar('primary-deep'),
 				primary: {
 					DEFAULT: 'rgb(var(--primary))',
 					foreground: 'rgb(var(--primary-foreground))'
@@ -103,10 +120,14 @@ export default {
 					dark: '#222222',
 				},
 				'cyan-blue': {
-					DEFAULT: '#05D1EB', // Cyan blue
-					light: '#05D1EB',
-					dark: '#0077B6',
-				}
+					DEFAULT: 'rgb(var(--primary))',
+					light: 'rgb(var(--primary-400))',
+					dark: 'rgb(var(--primary-700))',
+				},
+				'bhada-blue': 'rgb(var(--primary))',
+				'bhada-blue-light': 'rgb(var(--primary-400))',
+				'bhada-orange': 'rgb(var(--primary))',
+				'bhada-orange-light': 'rgb(var(--primary-400))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
