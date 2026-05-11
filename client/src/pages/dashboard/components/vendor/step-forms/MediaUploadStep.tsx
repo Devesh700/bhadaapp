@@ -166,7 +166,7 @@ const MediaUploadStep = ({
         )}
       </div>
 
-      <div className="space-y-4">
+      {/* <div className="space-y-4">
         <FormLabel className="text-foreground font-semibold text-lg">
           Property Videos (URLs, optional)
         </FormLabel>
@@ -194,7 +194,7 @@ const MediaUploadStep = ({
             </div>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
