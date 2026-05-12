@@ -91,14 +91,14 @@ const CitiesSection = () => {
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-8 sm:mb-12 md:mb-16">
           {/* Mobile-optimized Section Badge */}
-          <div className="inline-flex items-center gap-2 bg-secondary text-primary px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 md:py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4 md:mb-6 border border-border shadow-lg animate-bounce">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 md:py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4 md:mb-6 border border-border shadow-lg animate-bounce">
             <MapPin className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse" />
             <span>Explore Cities</span>
             <Sparkles className="w-2 h-2 sm:w-3 sm:h-3 animate-spin" style={{ animationDuration: '3s' }} />
           </div>
 
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 sm:mb-4">
-            Explore Properties by <span className="text-primary">Cities</span>
+            Explore Properties by <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent">Cities</span>
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Find the perfect property in your preferred city. Discover verified listings with competitive pricing and premium amenities across India's major cities.
@@ -142,7 +142,7 @@ const CitiesSection = () => {
                 </div>
                 
                 {/* Growth Badge */}
-                <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-primary text-primary-foreground px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-primary-foreground px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
                   <TrendingUp className="w-2 h-2" />
                   {city.growth}
                 </div>
@@ -166,7 +166,7 @@ const CitiesSection = () => {
                   {/* Enhanced CTA Button */}
                   <Button 
                     variant="ghost" 
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg group-hover:scale-105 transition-all duration-300 border-0 font-semibold py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm relative overflow-hidden"
+                    className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-primary-foreground hover:bg-primary/90 hover:shadow-lg group-hover:scale-105 transition-all duration-300 border-0 font-semibold py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm relative overflow-hidden"
                     aria-label={`Explore all properties in ${city.name}`}
                   >
                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -185,7 +185,7 @@ const CitiesSection = () => {
         {/* Mobile-optimized Bottom CTA */}
         <div className="mt-8 sm:mt-10 md:mt-12 text-center">
           <div
-            className="inline-flex items-center gap-2 sm:gap-3 bg-primary text-primary-foreground px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-lg sm:rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer group"
+            className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-primary-foreground px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-lg sm:rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer group"
             onClick={() => navigate("/properties/rent")}
           >
             <MapPin className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-bounce" />

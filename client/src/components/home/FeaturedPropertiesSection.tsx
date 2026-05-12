@@ -1,53 +1,40 @@
 import { useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Star, Zap } from "lucide-react";
 import PropertyCard from "./PropertyCard";
-import { Property } from "@/store/types/property.type";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
 import { searchProperties } from "@/store/thunks/property.thunk";
-import { resolveMediaUrl } from "@/lib/media";
 import { mapToCard } from "@/lib/utils";
 
-const formatPrice = (property: Property) => {
-  const value = Number(property.price || 0).toLocaleString("en-IN");
-  return property.propertyType === "rent" ? `₹${value}/month` : `₹${value}`;
-};
-
 const FeaturedPropertiesSection = () => {
-  // const [properties, setProperties] = useState<Property[]>([]);
-  // const [loading, setLoading] = useState(true);
   const dispatch = useAppDispatch();
   const { properties } = useAppSelector((state) => state.property);
 
   useEffect(() => {
     const loadFeatured = async () => {
       try {
-        // setLoading(true);
-        // const featuredResponse = await propertyService.searchProperties({
-        //   filters: {  isFeatured: true },
-        // });
-        const featuredResponse = await dispatch(
-          searchProperties({ filters: { isFeatured: true } }),
-        );
+        await dispatch(searchProperties({ filters: { isFeatured: true } }));
       } catch (error) {
-        // setProperties([]);
         console.error("Error Fetching Properties", error);
-      } finally {
-        // setLoading(false);
       }
     };
-    if (!properties?.data?.length) loadFeatured();
-  }, []);
+
+    if (!properties?.data?.length) {
+      loadFeatured();
+    }
+  }, [dispatch, properties?.data?.length]);
 
   const featuredProperties = useMemo(() => {
     const sorted = [...(properties?.data || [])].sort((a, b) => {
       const featuredScoreA = a.isFeatured ? 1 : 0;
       const featuredScoreB = b.isFeatured ? 1 : 0;
-      if (featuredScoreA !== featuredScoreB)
+      if (featuredScoreA !== featuredScoreB) {
         return featuredScoreB - featuredScoreA;
+      }
       return (b.viewCount || 0) - (a.viewCount || 0);
     });
 
-    return sorted.slice(0, 10).map(mapToCard);
+    return sorted.slice(0, 6).map(mapToCard);
   }, [properties]);
 
   const loading = useMemo(
@@ -57,85 +44,82 @@ const FeaturedPropertiesSection = () => {
 
   return (
     <section
-      className="py-8 sm:py-12 md:py-16 bg-background relative overflow-hidden"
+      className="relative overflow-hidden bg-background py-8 sm:py-12 md:py-16"
       aria-label="Featured Properties - Premium Real Estate Listings in India"
     >
-      {/* Mobile-optimized Background Effects */}
-      <div className="absolute top-0 left-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[500px] lg:h-[500px] bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+      <div className="absolute left-0 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl animate-pulse sm:h-80 sm:w-80 md:h-96 md:w-96 lg:h-[500px] lg:w-[500px]"></div>
       <div
-        className="absolute bottom-0 right-0 w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px] bg-accent/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-pulse"
+        className="absolute bottom-0 right-0 h-48 w-48 translate-x-1/2 translate-y-1/2 rounded-full bg-accent/10 blur-3xl animate-pulse sm:h-64 sm:w-64 md:h-80 md:w-80 lg:h-[400px] lg:w-[400px]"
         style={{ animationDelay: "3s" }}
       ></div>
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        {/* Mobile-optimized Header */}
-        <div className="text-center mb-8 sm:mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 bg-secondary text-primary px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 md:py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4 md:mb-6 border border-border shadow-lg">
-            <Star className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse text-primary" />
+      <div className="container relative z-10 mx-auto px-4 sm:px-6">
+        <div className="mb-8 text-center sm:mb-12 md:mb-16">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1.5 text-xs font-bold text-blue-700 shadow-lg sm:mb-4 sm:px-4 sm:py-2 sm:text-sm md:mb-6 md:px-6 md:py-2">
+            <Star className="h-3 w-3 animate-pulse sm:h-4 sm:w-4" />
             <span>Premium Selection</span>
-            <Zap className="w-2 h-2 sm:w-3 sm:h-3 animate-bounce" />
+            <Zap className="h-2 w-2 animate-bounce sm:h-3 sm:w-3" />
           </div>
 
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 sm:mb-4">
-            <span className="text-primary">Featured</span> Properties
+          <h2 className="mb-3 text-xl font-bold text-foreground sm:mb-4 sm:text-2xl md:text-3xl lg:text-4xl">
+            <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent">
+              Featured
+            </span>{" "}
+            Properties
           </h2>
-          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
             Discover our handpicked selection of premium properties with
             verified details, competitive pricing, and exceptional amenities
             across India.
           </p>
         </div>
 
-        {/* Mobile-responsive properties display */}
         {loading ? (
-          <div className="text-center py-10 text-gray-600">
+          <div className="py-10 text-center text-gray-600">
             Loading featured properties...
           </div>
         ) : featuredProperties.length === 0 ? (
-          <div className="text-center py-10 text-gray-600">
+          <div className="py-10 text-center text-gray-600">
             No featured properties available right now.
           </div>
         ) : (
-          <div className="overflow-hidden relative rounded-lg sm:rounded-xl md:rounded-2xl">
-            <div
-              className="flex animate-scroll space-x-3 sm:space-x-4 md:space-x-6"
-              style={{
-                animation: "scroll 40s linear infinite",
-                width: `calc(280px * ${featuredProperties.length * 2})`,
-              }}
-            >
-              {[...featuredProperties].map((property, index) => (
-                <PropertyCard
-                      key={property.id}
-                      id={property.id}
-                      title={property.title}
-                      location={property.location}
-                      price={property.price}
-                      imageUrl={property.imageUrl}
-                      bedrooms={property.bedrooms}
-                      bathrooms={property.bathrooms}
-                      area={property.area}
-                      propertyType={property.propertyType as any}
-                      listingType={property.listingType}
-                      isFurnished={property.isFurnished as any}
-                      tenantPreference={property.tenantPreference}
-                      className="max-w-80"
-                    />
+          <div className="relative overflow-hidden rounded-lg p-4 sm:rounded-xl md:rounded-2xl">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+              {featuredProperties.map((property, index) => (
+                <div
+                  key={property.id}
+                  className={index > 2 ? "hidden sm:block" : ""}
+                >
+                  <PropertyCard
+                    id={property.id}
+                    title={property.title}
+                    location={property.location}
+                    price={property.price}
+                    imageUrl={property.imageUrl}
+                    bedrooms={property.bedrooms}
+                    bathrooms={property.bathrooms}
+                    area={property.area}
+                    propertyType={property.propertyType as any}
+                    listingType={property.listingType}
+                    isFurnished={property.isFurnished as any}
+                    tenantPreference={property.tenantPreference}
+                    className="max-w-100"
+                  />
+                </div>
               ))}
-              {/* {[...featuredProperties, ...featuredProperties].map((property, index) => (
-                <PropertyCard key={`${property.id}-${index}`} property={property} index={index} />
-              ))} */}
+            </div>
+
+            <div className="mt-8 flex justify-center sm:hidden">
+              <Link
+                to="/properties/rent"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl"
+              >
+                View More Properties
+              </Link>
             </div>
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
     </section>
   );
 };

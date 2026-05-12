@@ -1,10 +1,9 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Import Minimalistic Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600;700&display=swap");
 
 @layer base {
   :root {
@@ -17,7 +16,8 @@
     --popover: 255 255 255;
     --popover-foreground: 31 41 55;
 
-    --primary: 255 122 0;
+    --primary: 37 99 235;
+    /* --primary: 255 122 0; */
     --primary-foreground: 255 255 255;
     --primary-50: 255 247 237;
     --primary-100: 255 237 213;
@@ -161,7 +161,12 @@
     scroll-behavior: smooth;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-display font-semibold leading-tight;
     text-rendering: optimizeLegibility;
   }
@@ -179,13 +184,23 @@
   }
 
   /* Remove focus outline and rings from all interactive elements */
-  button, a, input, select, textarea, [role="button"], [tabindex] {
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  [tabindex] {
     @apply focus:outline-none;
     outline: none !important;
     box-shadow: none !important;
   }
 
-  button:focus, a:focus, input:focus, select:focus, textarea:focus {
+  button:focus,
+  a:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
     outline: none !important;
     box-shadow: none !important;
     ring: none !important;
@@ -198,7 +213,8 @@
   }
 
   /* Prevent horizontal scroll */
-  body, html {
+  body,
+  html {
     overflow-x: hidden;
   }
 }
@@ -343,7 +359,9 @@
 }
 
 /* Professional form styling for mobile */
-input, select, textarea {
+input,
+select,
+textarea {
   @apply text-base;
   font-size: 16px; /* Prevents zoom on iOS */
   outline: none !important;
@@ -356,7 +374,9 @@ select option {
 
 /* Professional touch targets */
 @media (max-width: 768px) {
-  button, .btn, a[role="button"] {
+  button,
+  .btn,
+  a[role="button"] {
     min-height: 48px;
     padding: 12px 16px;
     outline: none !important;

@@ -1,11 +1,21 @@
 // AmenitiesStep.tsx
 import { UseFormReturn } from "react-hook-form";
 import { PropertyFormData } from "./propertySchema";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { CheckCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { showAuthModal } from "@/store/slices/partials.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
+import { selectIsAuthenticated } from "@/store/selectors/auth.selector";
 
 interface AmenitiesStepProps {
   form: UseFormReturn<PropertyFormData>;
@@ -41,9 +51,19 @@ const AMENITIES_LIST = [
   "Window Coverings",
 ];
 
-const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesStepProps) => {
+const AmenitiesStep = ({
+  form,
+  onFinalSubmit,
+  isSubmitting = false,
+}: AmenitiesStepProps) => {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const openAuthModal = () => {
+    const redirectPath = `${location.pathname}${location.search}${location.hash}`;
+    dispatch(showAuthModal(redirectPath));
+  };
   useEffect(() => {
     const formAmenities = form.getValues("specifications.amenities") || [];
     setSelectedAmenities(formAmenities);
@@ -53,7 +73,10 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
     const allSelected = selectedAmenities.length === AMENITIES_LIST.length;
     const newSelection = allSelected ? [] : [...AMENITIES_LIST];
     setSelectedAmenities(newSelection);
-    form.setValue("specifications.amenities", newSelection, { shouldValidate: true, shouldDirty: true });
+    form.setValue("specifications.amenities", newSelection, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   const handleAmenityChange = (amenity: string, checked: boolean) => {
@@ -62,7 +85,10 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
       : selectedAmenities.filter((item) => item !== amenity);
 
     setSelectedAmenities(newSelection);
-    form.setValue("specifications.amenities", newSelection, { shouldValidate: true, shouldDirty: true });
+    form.setValue("specifications.amenities", newSelection, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   const handleSubmit = () => {
@@ -73,11 +99,15 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
     <div className="space-y-6">
       <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
         <h3 className="text-lg font-semibold text-slate-900">Amenities</h3>
-        <p className="text-sm text-slate-600 mt-1">Select amenities available at your property.</p>
+        <p className="text-sm text-slate-600 mt-1">
+          Select amenities available at your property.
+        </p>
       </div>
 
       <div className="flex justify-between items-center">
-        <FormLabel className="text-slate-900 font-semibold text-lg">Amenities (Final Step)</FormLabel>
+        <FormLabel className="text-slate-900 font-semibold text-lg">
+          Amenities (Final Step)
+        </FormLabel>
         <Button
           type="button"
           variant="outline"
@@ -85,14 +115,16 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
           disabled={isSubmitting}
           className="bg-white border-cyan-200 text-slate-800 hover:bg-cyan-50 font-medium"
         >
-          {selectedAmenities.length === AMENITIES_LIST.length ? "Deselect All" : "Select All"}
+          {selectedAmenities.length === AMENITIES_LIST.length
+            ? "Deselect All"
+            : "Select All"}
         </Button>
       </div>
 
       <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4 mb-6">
         <p className="text-cyan-800 text-sm font-medium">
-          <strong>Final Step:</strong> Select the amenities available at the property, or skip if none apply, then click
-          "Submit Property".
+          <strong>Final Step:</strong> Select the amenities available at the
+          property, or skip if none apply, then click "Submit Property".
         </p>
       </div>
 
@@ -112,10 +144,15 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
                       id={amenity}
                       checked={selectedAmenities.includes(amenity)}
                       disabled={isSubmitting}
-                      onCheckedChange={(checked) => handleAmenityChange(amenity, checked as boolean)}
+                      onCheckedChange={(checked) =>
+                        handleAmenityChange(amenity, checked as boolean)
+                      }
                       className="border-cyan-300 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500"
                     />
-                    <label htmlFor={amenity} className="text-slate-900 text-sm font-medium cursor-pointer flex-1">
+                    <label
+                      htmlFor={amenity}
+                      className="text-slate-900 text-sm font-medium cursor-pointer flex-1"
+                    >
                       {amenity}
                     </label>
                   </div>
@@ -129,7 +166,9 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
 
       {selectedAmenities.length > 0 && (
         <div className="bg-cyan-50/50 rounded-xl p-4 border border-cyan-100">
-          <p className="text-slate-900 font-semibold mb-2">Selected Amenities ({selectedAmenities.length}):</p>
+          <p className="text-slate-900 font-semibold mb-2">
+            Selected Amenities ({selectedAmenities.length}):
+          </p>
           <div className="flex flex-wrap gap-2">
             {selectedAmenities.map((amenity) => (
               <span
@@ -146,7 +185,7 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
       <div className="flex justify-end pt-6 border-t border-cyan-100">
         <Button
           type="button"
-          onClick={handleSubmit}
+          onClick={() => (isAuthenticated ? handleSubmit() : openAuthModal())}
           disabled={isSubmitting}
           className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white px-8 py-3 text-lg font-semibold"
         >
@@ -167,4 +206,4 @@ const AmenitiesStep = ({ form, onFinalSubmit, isSubmitting = false }: AmenitiesS
   );
 };
 
-export default AmenitiesStep
+export default AmenitiesStep;

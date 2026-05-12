@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   PropertyFormData,
   propertyFormSchema,
@@ -34,6 +34,7 @@ import { propertyTemplates, type PropertyTemplate } from "./propertyTemplates";
 import { applyPropertyTemplate } from "./autofillUtils";
 import { LayoutGrid } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import { showAuthModal } from "@/store/slices/partials.slice";
 
 // Step configuration remains the same; step internals will be updated later to match the new schema fields
 const steps: Array<{ id: number; title: string; component: any }> = [

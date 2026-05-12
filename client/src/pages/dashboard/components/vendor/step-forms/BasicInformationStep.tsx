@@ -1,10 +1,23 @@
 // BasicInformationStep.tsx
 import { UseFormReturn } from "react-hook-form";
 import { PropertyFormData } from "./propertySchema";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MobileNumberInput } from "./AdditionalFieldsStep";
 
 interface BasicInformationStepProps {
   form: UseFormReturn<PropertyFormData>;
@@ -17,8 +30,12 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
-        <h3 className="text-lg font-semibold text-slate-900">Basic Information</h3>
-        <p className="text-sm text-slate-600 mt-1">Add core details that describe your property listing.</p>
+        <h3 className="text-lg font-semibold text-slate-900">
+          Basic Information
+        </h3>
+        <p className="text-sm text-slate-600 mt-1">
+          Add core details that describe your property listing.
+        </p>
       </div>
 
       <FormField
@@ -26,7 +43,9 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
         name="title"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-slate-800 font-semibold text-base">Property Title *</FormLabel>
+            <FormLabel className="text-slate-800 font-semibold text-base">
+              Property Title *
+            </FormLabel>
             <FormControl>
               <Input
                 placeholder="Enter property title"
@@ -45,7 +64,9 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
           name="propertyType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-slate-800 font-semibold text-base">Type *</FormLabel>
+              <FormLabel className="text-slate-800 font-semibold text-base">
+                Type *
+              </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className={inputClass}>
@@ -53,9 +74,19 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="bg-white border-cyan-100">
-                  <SelectItem value="rent" className="text-slate-900 hover:bg-cyan-50 font-medium">Rent</SelectItem>
+                  <SelectItem
+                    value="rent"
+                    className="text-slate-900 hover:bg-cyan-50 font-medium"
+                  >
+                    Rent
+                  </SelectItem>
                   {/* <SelectItem value="commercial" className="text-slate-900 hover:bg-cyan-50 font-medium">Commercial</SelectItem> */}
-                  <SelectItem value="sale" className="text-slate-900 hover:bg-cyan-50 font-medium">Sale</SelectItem>
+                  <SelectItem
+                    value="sale"
+                    className="text-slate-900 hover:bg-cyan-50 font-medium"
+                  >
+                    Sale
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -68,7 +99,9 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-slate-800 font-semibold text-base">Category *</FormLabel>
+              <FormLabel className="text-slate-800 font-semibold text-base">
+                Category *
+              </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className={inputClass}>
@@ -76,10 +109,30 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="bg-white border-cyan-100">
-                  <SelectItem value="apartment" className="text-slate-900 hover:bg-cyan-50 font-medium">Apartment</SelectItem>
-                  <SelectItem value="house" className="text-slate-900 hover:bg-cyan-50 font-medium">House</SelectItem>
-                  <SelectItem value="plot" className="text-slate-900 hover:bg-cyan-50 font-medium">Plot</SelectItem>
-                  <SelectItem value="commercial" className="text-slate-900 hover:bg-cyan-50 font-medium">Commercial</SelectItem>
+                  <SelectItem
+                    value="apartment"
+                    className="text-slate-900 hover:bg-cyan-50 font-medium"
+                  >
+                    Apartment
+                  </SelectItem>
+                  <SelectItem
+                    value="house"
+                    className="text-slate-900 hover:bg-cyan-50 font-medium"
+                  >
+                    House
+                  </SelectItem>
+                  <SelectItem
+                    value="plot"
+                    className="text-slate-900 hover:bg-cyan-50 font-medium"
+                  >
+                    Plot
+                  </SelectItem>
+                  <SelectItem
+                    value="commercial"
+                    className="text-slate-900 hover:bg-cyan-50 font-medium"
+                  >
+                    Commercial
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -93,7 +146,9 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-slate-800 font-semibold text-base">Property Description *</FormLabel>
+            <FormLabel className="text-slate-800 font-semibold text-base">
+              Property Description *
+            </FormLabel>
             <FormControl>
               <Textarea
                 placeholder="Describe the property in detail..."
@@ -111,15 +166,23 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
         name="price"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-slate-800 font-semibold text-base">Price *</FormLabel>
+            <FormLabel className="text-slate-800 font-semibold text-base">
+              Price *
+            </FormLabel>
             <FormControl>
-              <Input
+              <MobileNumberInput
+                value={Number.isFinite(field.value as any) ? field.value : 0}
+                onChange={field.onChange}
+                placeholder="0"
+                className={inputClass}
+              />
+              {/* <Input
                 type="number"
                 placeholder="0"
                 value={Number.isFinite(field.value as any) ? field.value : ""}
                 onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
                 className={inputClass}
-              />
+              /> */}
             </FormControl>
             <FormMessage />
           </FormItem>

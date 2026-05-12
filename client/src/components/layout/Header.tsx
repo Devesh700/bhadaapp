@@ -212,7 +212,7 @@ import {
 } from "@/store/selectors/auth.selector";
 import { logout } from "@/store/slices/auth.slice";
 import { showAuthModal } from "@/store/slices/partials.slice";
-import brandLogo from "@/assets/logo.png"
+import brandLogo from "@/assets/logo.png";
 
 const Header = () => {
   const [showOwnerLogin, setShowOwnerLogin] = useState(false);
@@ -254,7 +254,11 @@ const Header = () => {
                 <span className="text-white">Bhada</span>
                 <span className="text-blue-300">.in</span>
               </span> */}
-              <img src={brandLogo} alt="Bhada.in" className="w-32 h-auto rounded-lg" />
+              <img
+                src={brandLogo}
+                alt="Bhada.in"
+                className="w-32 h-auto rounded-lg"
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -283,16 +287,16 @@ const Header = () => {
                 Buy
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              {isAuthenticated && (
-                <Link
-                  to="/create-property"
-                  className="text-blue-200 hover:text-white font-medium transition-colors duration-200 relative group"
-                  style={{ outline: "none", boxShadow: "none" }}
-                >
-                  List Property
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
-                </Link>
-              )}
+              {/* {isAuthenticated && ( */}
+              <Link
+                to="/create-property"
+                className="text-blue-200 hover:text-white font-medium transition-colors duration-200 relative group"
+                style={{ outline: "none", boxShadow: "none" }}
+              >
+                List Property
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-300 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+              {/* )} */}
             </nav>
 
             {/* Desktop Actions */}
@@ -403,8 +407,17 @@ const Header = () => {
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                     style={{ outline: "none", boxShadow: "none" }}
                   >
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Join Us
+                    {isAuthenticated ? (
+                      <>
+                        <LogOut className="w-4 h-4 mr-2" />
+                        logout
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Join Us
+                      </>
+                    )}
                   </Button>
                 </div>
               </nav>

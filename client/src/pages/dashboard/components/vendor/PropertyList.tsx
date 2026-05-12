@@ -11,15 +11,32 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { mapToCard } from "@/lib/utils";
+import { resolveMediaUrl } from "@/lib/media";
 
 const PropertyList = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { data:properties, status } = useAppSelector((state) => state.property.properties);
-    const loading = useMemo(() => status === 1 ,[status]);
+  const { data: properties, status } = useAppSelector(
+    (state) => state.property.properties,
+  );
+  const loading = useMemo(() => status === 1, [status]);
   useEffect(() => {
     dispatch(getMyProperties({}));
   }, [dispatch]);
+
+  const featuredProperties = useMemo(() => {
+    return properties?.map((p) => {
+      const firstImage =
+        Array.isArray(p?.images) && p.images.length
+          ? resolveMediaUrl(p.images[0])
+          : undefined;
+      return {
+        ...p,
+        images: firstImage,
+      };
+    });
+  }, [properties]);
 
   return (
     <Card className="shadow-xl border-0 bg-white/70 backdrop-blur-sm">
@@ -68,13 +85,22 @@ const PropertyList = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.map((property, index: number) => (
+            {featuredProperties.map((property, index: number) => (
               <Card
                 key={property._id || index}
                 className="border border-blue-100 hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 rounded-xl overflow-hidden"
               >
                 <div className="h-40 bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center">
-                  <Building className="w-10 h-10 text-blue-600" />
+                  <img
+                    src={
+                      property.images ||
+                      "https://placehold.co/600x400/e2e8f0/475569?text=Property+Image"
+                    }
+                    alt={property.title}
+                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-t-lg"
+                    loading="lazy"
+                  />
+                  {/* <Building className="w-10 h-10 text-blue-600" /> */}
                 </div>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-3">
@@ -107,7 +133,11 @@ const PropertyList = () => {
                       size="sm"
                       variant="outline"
                       className="flex-1 border-blue-200 text-blue-600 hover:bg-blue-50"
-                      onClick={()=> navigate(`/properties/${property.propertyType}/${property._id}`)}
+                      onClick={() =>
+                        navigate(
+                          `/properties/${property.propertyType}/${property._id}`,
+                        )
+                      }
                     >
                       View
                     </Button>
