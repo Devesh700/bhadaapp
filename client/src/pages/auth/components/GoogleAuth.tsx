@@ -70,7 +70,7 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-max mx-auto">
       {/* Custom styled Google Login Button */}
       <GoogleLogin
         onSuccess={handleGoogleSuccess}
@@ -84,6 +84,7 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ onSuccess }) => {
         shape="rectangular"
         logo_alignment="left"
         locale="en"
+        
       />
       
       {/* Loading state overlay */}
