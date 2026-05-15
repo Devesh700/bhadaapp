@@ -56,10 +56,10 @@ const categoryOptions = [
 ] as const;
 
 const unitTypeOptions = [
-  { value: "1bhk", label: "1 BHK", bedrooms: 1, bathrooms: 1 },
-  { value: "2bhk", label: "2 BHK", bedrooms: 2, bathrooms: 2 },
-  { value: "3bhk", label: "3 BHK", bedrooms: 3, bathrooms: 3 },
-  { value: "4bhk", label: "4+ BHK", bedrooms: 4, bathrooms: 4 },
+  { value: "1bhk", label: "1 BHK", bedrooms: 1, bathrooms: 1, title: "1 BHK Apartment" , description: "A cozy 1 BHK apartment perfect for couples or small families. Features a comfortable bedroom, living area, kitchen, and bathroom in a compact layout."},
+  { value: "2bhk", label: "2 BHK", bedrooms: 2, bathrooms: 2, title: "2 BHK Apartment" , description: "Spacious 2 BHK apartment ideal for small families. Offers two bedrooms, a living room, kitchen, and bathrooms, providing ample space for comfortable living."},
+  { value: "3bhk", label: "3 BHK", bedrooms: 3, bathrooms: 3, title: "3 BHK Apartment" , description: "Luxurious 3 BHK apartment perfect for larger families. Boasts three bedrooms, a spacious living area, modern kitchen, and multiple bathrooms for ultimate comfort."},
+  { value: "4bhk", label: "4+ BHK", bedrooms: 4, bathrooms: 4, title: "4+ BHK Apartment" , description: "Elegant 4+ BHK apartment designed for spacious living. Features four or more bedrooms, a grand living room, high-end kitchen, and multiple bathrooms."},
 ] as const;
 
 const bhkCategories = new Set(["apartment", "house"]);
@@ -152,6 +152,12 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
                           form.setValue("specifications.bathrooms", undefined, {
                             shouldValidate: true,
                           });
+                          form.setValue("title", "", {
+                            shouldValidate: true,
+                          });
+                          form.setValue("description", "", {
+                            shouldValidate: true,
+                          });
                         }
                       }}
                       className={`rounded-2xl border p-4 text-left transition-all duration-200 ${
@@ -219,6 +225,12 @@ const BasicInformationStep = ({ form }: BasicInformationStepProps) => {
                             option.bathrooms,
                             { shouldValidate: true },
                           );
+                          form.setValue("title", option.title, {
+                            shouldValidate: true,
+                          });
+                          form.setValue("description", option.description, {
+                            shouldValidate: true,
+                          });
                         }}
                         className={`rounded-2xl border p-4 text-center transition-all duration-200 ${
                           isActive

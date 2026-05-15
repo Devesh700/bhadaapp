@@ -375,7 +375,7 @@ const Header = () => {
                 >
                   Buy
                 </Link>
-                {isAuthenticated && (
+                {/* {isAuthenticated && ( */}
                   <Link
                     to="/create-property"
                     className="text-blue-200 hover:text-white font-medium py-2 px-3 rounded-lg hover:bg-white/10 transition-all duration-200"
@@ -384,8 +384,9 @@ const Header = () => {
                   >
                     List Property
                   </Link>
-                )}
+                {/* )} */}
                 <div className="pt-3 border-t border-blue-700 space-y-3">
+                  {isAuthenticated && (
                   <Button
                     variant="ghost"
                     onClick={() => {
@@ -399,6 +400,7 @@ const Header = () => {
                     <Building2 className="w-4 h-4 mr-2" />
                     Dashboard
                   </Button>
+                  )}
                   <Button
                     // onClick={()=> navigate("/login")}
                     onClick={() =>
