@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { mapToCard } from "@/lib/utils";
 import { resolveMediaUrl } from "@/lib/media";
 
 const PropertyList = () => {
@@ -21,22 +20,29 @@ const PropertyList = () => {
     (state) => state.property.properties,
   );
   const loading = useMemo(() => status === 1, [status]);
+  const propertyItems = properties ?? [];
+
   useEffect(() => {
     dispatch(getMyProperties({}));
   }, [dispatch]);
 
   const featuredProperties = useMemo(() => {
-    return properties?.map((p) => {
-      const firstImage =
-        Array.isArray(p?.images) && p.images.length
-          ? resolveMediaUrl(p.images[0])
-          : undefined;
+    return propertyItems.map((property) => {
       return {
-        ...p,
-        images: firstImage,
+        ...property,
+        previewImage:
+          Array.isArray(property?.images) && property.images.length
+            ? resolveMediaUrl(property.images[0])
+            : undefined,
       };
     });
-  }, [properties]);
+  }, [propertyItems]);
+
+  const handleEdit = (property: any) => {
+    navigate("/create-property", {
+      state: { editMode: true, propertyData: property },
+    });
+  };
 
   return (
     <Card className="shadow-xl border-0 bg-white/70 backdrop-blur-sm">
@@ -64,7 +70,7 @@ const PropertyList = () => {
           <div className="text-center py-12 text-gray-500 animate-pulse">
             Loading properties...
           </div>
-        ) : properties.length === 0 ? (
+        ) : propertyItems.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-28 h-28 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
               <Building className="w-14 h-14 text-blue-600" />
@@ -93,7 +99,7 @@ const PropertyList = () => {
                 <div className="h-40 bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center">
                   <img
                     src={
-                      property.images ||
+                      property.previewImage ||
                       "https://placehold.co/600x400/e2e8f0/475569?text=Property+Image"
                     }
                     alt={property.title}
@@ -126,6 +132,7 @@ const PropertyList = () => {
                     <Button
                       size="sm"
                       className="flex-1 bg-blue-600 hover:bg-blue-700 shadow-md"
+                      onClick={() => handleEdit(property)}
                     >
                       Edit
                     </Button>

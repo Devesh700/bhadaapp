@@ -20,23 +20,32 @@ interface MobileNumberInputProps {
   onChange: (value: number | undefined) => void;
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export const MobileNumberInput = ({
   value,
   onChange,
-  placeholder = "0",
+  placeholder = "",
   className = "",
+  disabled = false,
 }: MobileNumberInputProps) => {
-  const currentValue = Number.isFinite(value as number) ? Number(value) : "";
+  const currentValue = value ?? undefined;
 
   const handleValueChange = (rawValue: string) => {
-    onChange(rawValue === "" ? undefined : Math.max(0, Number(rawValue)));
+    console.log("Raw input value:", rawValue);
+    if (rawValue === "") {
+      onChange("" as any); // Allow clearing the input
+      return;
+    }
+    const num = Number(rawValue);
+    if (isNaN(num)) return;
+    onChange(num < 1 ? 1 : num);
   };
 
   const adjustValue = (delta: number) => {
     const numericValue = Number.isFinite(value as number) ? Number(value) : 0;
-    onChange(Math.max(0, numericValue + delta));
+    onChange(Math.max(1, numericValue + delta));
   };
 
   return (
@@ -45,6 +54,7 @@ export const MobileNumberInput = ({
         type="button"
         aria-label="Decrease value"
         onClick={() => adjustValue(-1)}
+        disabled={disabled}
         className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-border-tertiary bg-background-secondary text-text-secondary transition-colors hover:bg-background-info hover:text-text-info active:scale-95 md:hidden"
       >
         <Minus className="h-3.5 w-3.5" />
@@ -53,8 +63,9 @@ export const MobileNumberInput = ({
       <Input
         type="number"
         placeholder={placeholder}
-        value={currentValue}
+        value={currentValue ?? undefined}
         onChange={(e) => handleValueChange(e.target.value)}
+        disabled={disabled}
         className={`h-10 flex-1 border-0 bg-transparent text-center md:text-left text-[15px] font-medium focus:ring-0 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${className}`}
       />
 
@@ -62,6 +73,7 @@ export const MobileNumberInput = ({
         type="button"
         aria-label="Increase value"
         onClick={() => adjustValue(1)}
+        disabled={disabled}
         className="flex h-10 w-10 shrink-0 items-center justify-center border-l border-border-tertiary bg-background-secondary text-text-secondary transition-colors hover:bg-background-info hover:text-text-info active:scale-95 md:hidden"
       >
         <Plus className="h-3.5 w-3.5" />
@@ -73,6 +85,9 @@ export const MobileNumberInput = ({
 const AdditionalFieldsStep = ({ form }: AdditionalFieldsStepProps) => {
   const inputClass =
     "bg-cyan-50/50 border-cyan-200 text-slate-900 placeholder:text-slate-500 focus:bg-white focus:border-cyan-500 rounded-xl";
+  const selectedCategory = form.watch("category");
+  const showResidentialFields =
+    selectedCategory === "apartment" || selectedCategory === "house";
 
   return (
     <div className="space-y-6">
@@ -96,9 +111,9 @@ const AdditionalFieldsStep = ({ form }: AdditionalFieldsStepProps) => {
               </FormLabel>
               <FormControl>
                 <MobileNumberInput
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="0"
+                  value={field.value ?? undefined}
+                  onChange={(val) => field.onChange(val)}
+                  placeholder="Enter total area in sqft"
                   className={inputClass}
                 />
               </FormControl>
@@ -107,47 +122,54 @@ const AdditionalFieldsStep = ({ form }: AdditionalFieldsStepProps) => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="specifications.bedrooms"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base font-semibold text-slate-800">
-                Bedrooms *
-              </FormLabel>
-              <FormControl>
-                <MobileNumberInput
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="0"
-                  className={inputClass}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {showResidentialFields && (
+          <FormField
+            control={form.control}
+            name="specifications.bedrooms"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-base font-semibold text-slate-800">
+                  Bedrooms
+                </FormLabel>
+                <FormControl>
+                  <MobileNumberInput
+                    value={field.value??undefined}
+                    onChange={field.onChange}
+                    placeholder="Auto-selected from unit type"
+                    className={inputClass}
+                  />
+                </FormControl>
+                <p className="text-xs text-slate-500">
+                  This is set from the unit type you selected in step 1.
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
-        <FormField
-          control={form.control}
-          name="specifications.bathrooms"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base font-semibold text-slate-800">
-                Bathrooms *
-              </FormLabel>
-              <FormControl>
-                <MobileNumberInput
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="0"
-                  className={inputClass}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {showResidentialFields && (
+          <FormField
+            control={form.control}
+            name="specifications.bathrooms"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-base font-semibold text-slate-800">
+                  Bathrooms *
+                </FormLabel>
+                <FormControl>
+                  <MobileNumberInput
+                    value={field.value??undefined}
+                    onChange={field.onChange}
+                    placeholder="Enter bathrooms"
+                    className={inputClass}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}

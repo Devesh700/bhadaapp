@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -30,11 +30,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { createProperty, updateProperty } from "@/store/thunks/property.thunk";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/redux";
-import { propertyTemplates, type PropertyTemplate } from "./propertyTemplates";
-import { applyPropertyTemplate } from "./autofillUtils";
-import { LayoutGrid } from "lucide-react";
 import Layout from "@/components/layout/Layout";
-import { showAuthModal } from "@/store/slices/partials.slice";
 
 // Step configuration remains the same; step internals will be updated later to match the new schema fields
 const steps: Array<{ id: number; title: string; component: any }> = [
@@ -51,6 +47,11 @@ export interface CreatePropertyWizardProps {
   onEditComplete?: () => void;
 }
 
+interface WizardLocationState {
+  editMode?: boolean;
+  propertyData?: Partial<PropertyFormData> & Record<string, any>;
+}
+
 const getOwnerNameFromUser = (user: any): string => {
   const firstName = user?.profile?.firstName?.trim?.() || "";
   const lastName = user?.profile?.lastName?.trim?.() || "";
@@ -59,14 +60,23 @@ const getOwnerNameFromUser = (user: any): string => {
   return fullName || user?.name?.trim?.() || "";
 };
 
+const inferUnitType = (bedrooms?: number) => {
+  if (!bedrooms || bedrooms < 1) return undefined;
+  if (bedrooms === 1) return "1bhk";
+  if (bedrooms === 2) return "2bhk";
+  if (bedrooms === 3) return "3bhk";
+  return "4bhk";
+};
+
 // Default values aligned to the new Zod schema
 const defaultZodValues: PropertyFormData = {
   // Basic Info
   title: "",
   description: "",
-  propertyType: "rent",
-  category: "apartment",
-  price: 0,
+  propertyType: undefined as any,
+  category: undefined as any,
+  unitType: undefined,
+  price: undefined,
 
   // Location
   location: {
@@ -79,9 +89,9 @@ const defaultZodValues: PropertyFormData = {
 
   // Specifications
   specifications: {
-    area: 0,
-    bedrooms: 0,
-    bathrooms: 0,
+    area: undefined,
+    bedrooms: undefined,
+    bathrooms: undefined,
     furnishing: undefined,
     parking: false,
     amenities: [],
@@ -109,6 +119,48 @@ const defaultZodValues: PropertyFormData = {
   updatedAt: undefined,
 };
 
+const toOptionalDate = (value: unknown): Date | undefined => {
+  if (!value) return undefined;
+  if (value instanceof Date) return value;
+
+  const parsed = new Date(value as string);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+};
+
+const normalizePropertyData = (
+  rawData?: Partial<PropertyFormData> & Record<string, any>,
+): PropertyFormData | undefined => {
+  if (!rawData) return undefined;
+
+  return {
+    ...defaultZodValues,
+    ...rawData,
+    unitType:
+      rawData.unitType ??
+      inferUnitType(rawData.specifications?.bedrooms),
+    location: {
+      ...defaultZodValues.location,
+      ...(rawData.location ?? {}),
+      coordinates: {
+        ...defaultZodValues.location.coordinates,
+        ...(rawData.location?.coordinates ?? {}),
+      },
+    },
+    specifications: {
+      ...defaultZodValues.specifications,
+      ...(rawData.specifications ?? {}),
+      amenities: Array.isArray(rawData.specifications?.amenities)
+        ? rawData.specifications.amenities
+        : [],
+    },
+    images: Array.isArray(rawData.images) ? rawData.images : [],
+    videos: Array.isArray(rawData.videos) ? rawData.videos : [],
+    primeListingExpiry: toOptionalDate(rawData.primeListingExpiry),
+    createdAt: toOptionalDate(rawData.createdAt),
+    updatedAt: toOptionalDate(rawData.updatedAt),
+  };
+};
+
 export default function CreatePropertyWizard({
   editMode = false,
   propertyData,
@@ -120,32 +172,35 @@ export default function CreatePropertyWizard({
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
-    null,
-  );
   const { toast } = useToast();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const routeState = location.state as WizardLocationState | null;
+  const effectiveEditMode = editMode || Boolean(routeState?.editMode);
+  const effectivePropertyData = useMemo(
+    () => normalizePropertyData(propertyData ?? routeState?.propertyData),
+    [propertyData, routeState?.propertyData],
+  );
 
   // RHF + Zod
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertyFormSchema),
-    defaultValues: propertyData ?? defaultZodValues,
+    defaultValues: effectivePropertyData ?? defaultZodValues,
     mode: "onSubmit",
   });
 
   // Sync when editing
   useEffect(() => {
-    if (propertyData) {
-      form.reset(propertyData);
+    if (effectivePropertyData) {
+      form.reset(effectivePropertyData);
       setImageFiles([]);
     }
-  }, [propertyData, form]);
+  }, [effectivePropertyData, form]);
 
   useEffect(() => {
     const currentOwner = form.getValues("owner");
     const ownerName = getOwnerNameFromUser(user);
-   console.log(ownerName)
     if (!currentOwner && ownerName) {
       form.setValue("owner", ownerName, {
         shouldDirty: false,
@@ -154,32 +209,34 @@ export default function CreatePropertyWizard({
     }
   }, [form, user]);
 
-  const handleTemplateSelect = (template: PropertyTemplate) => {
-    // If form is dirty, smart autofill utility will protect user input.
-    applyPropertyTemplate(form, template, (user as any)?.address?.city);
-    setSelectedTemplateId(template.id);
-    toast({
-      title: `${template.label} Template Applied`,
-      description:
-        "Basic fields have been autofilled. You can still modify them.",
-    });
-  };
-
   const progress = (currentStep / steps.length) * 100;
 
   // Map step -> fields that should be validated for that step (Zod schema paths)
   const getStepFields = (step: number): string[] => {
     switch (step) {
       case 1:
-        return ["title", "description", "propertyType", "category", "price"];
-      case 2:
         return [
-          "specifications.area",
-          "specifications.bedrooms",
-          "specifications.bathrooms",
-          "specifications.furnishing",
-          "specifications.parking",
+          "title",
+          "description",
+          "propertyType",
+          "category",
+          "unitType",
+          "price",
         ];
+      case 2:
+        return form.getValues("category") === "apartment" ||
+          form.getValues("category") === "house"
+          ? [
+              "specifications.area",
+              "specifications.bathrooms",
+              "specifications.furnishing",
+              "specifications.parking",
+            ]
+          : [
+              "specifications.area",
+              "specifications.furnishing",
+              "specifications.parking",
+            ];
       case 3:
         return [
           "location.address",
@@ -242,7 +299,10 @@ export default function CreatePropertyWizard({
     }
 
     const data = form.getValues();
-    if (!data.images?.length && imageFiles.length === 0) {
+    const { unitType: _unitType, ...submitData } = data as PropertyFormData & {
+      unitType?: string;
+    };
+    if (!submitData.images?.length && imageFiles.length === 0) {
       toast({
         title: "Validation Error",
         description:
@@ -258,18 +318,18 @@ export default function CreatePropertyWizard({
       localStorage.getItem("vendor_properties") || "[]",
     );
     const newProperty = {
-      ...data,
+      ...submitData,
       id: Date.now().toString(),
       specifications: {
-        ...data.specifications,
-        amenities: data.specifications?.amenities || [],
+        ...submitData.specifications,
+        amenities: submitData.specifications?.amenities || [],
       },
     };
 
-    if (editMode && propertyData) {
+    if (effectiveEditMode && effectivePropertyData) {
       const updatedProperties = properties.map((p: any) =>
-        p.id === (propertyData as any)?.propertyId
-          ? { ...data, id: (propertyData as any)?.propertyId }
+        p.id === (effectivePropertyData as any)?.propertyId
+          ? { ...submitData, id: (effectivePropertyData as any)?.propertyId }
           : p,
       );
       localStorage.setItem(
@@ -283,22 +343,22 @@ export default function CreatePropertyWizard({
 
     try {
       const propertyId =
-        (propertyData as any)?._id ||
-        (propertyData as any)?.id ||
-        (propertyData as any)?.propertyId;
+        (effectivePropertyData as any)?._id ||
+        (effectivePropertyData as any)?.id ||
+        (effectivePropertyData as any)?.propertyId;
 
-      if (editMode && propertyId) {
+      if (effectiveEditMode && propertyId) {
         await dispatch(
           updateProperty({
             id: propertyId,
-            data: data as any,
+            data: submitData as any,
             imageFiles,
           }) as any,
         ).unwrap();
       } else {
         await dispatch(
           createProperty({
-            data: data as any,
+            data: submitData as any,
             imageFiles,
           }) as any,
         ).unwrap();
@@ -309,10 +369,10 @@ export default function CreatePropertyWizard({
       setIsSubmitting(false);
 
       toast({
-        title: editMode
+        title: effectiveEditMode
           ? "🎉 Property Updated Successfully!"
           : "🎉 Property Listed Successfully!",
-        description: editMode
+        description: effectiveEditMode
           ? "Your property has been updated and is under review."
           : "You've earned 10 coins for listing your property!",
         duration: 5000,
@@ -354,10 +414,10 @@ export default function CreatePropertyWizard({
             {/* Header */}
             <div className="text-center mb-8 bg-card/80 rounded-2xl border border-border shadow-sm px-6 py-8">
               <h1 className="text-4xl font-bold text-foreground mb-4">
-                {editMode ? "Edit Your Property" : "List Your Property"}
+                {effectiveEditMode ? "Edit Your Property" : "List Your Property"}
               </h1>
               <p className="text-muted-foreground text-lg font-medium">
-                {editMode
+                {effectiveEditMode
                   ? "Update your property details"
                   : "Complete all steps to list your property on Bhada.in"}
               </p>
@@ -376,42 +436,6 @@ export default function CreatePropertyWizard({
               </div>
               <Progress value={progress} className="h-3" />
             </div>
-
-            {/* Template Selection (Only on first step and not in edit mode) */}
-            {!editMode && currentStep === 1 && (
-              <div className="mb-8 p-6 bg-blue-50/50 rounded-2xl border border-blue-100 shadow-sm">
-                <div className="flex items-center gap-2 mb-4 text-blue-800">
-                  <LayoutGrid className="w-5 h-5" />
-                  <h3 className="font-semibold">Quick Start with Templates</h3>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {propertyTemplates.map((template) => (
-                    <Button
-                      key={template.id}
-                      type="button"
-                      variant={
-                        selectedTemplateId === template.id
-                          ? "default"
-                          : "outline"
-                      }
-                      onClick={() => handleTemplateSelect(template)}
-                      className={`rounded-xl h-auto py-3 flex flex-col gap-1 transition-all duration-300 ${
-                        selectedTemplateId === template.id
-                          ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md scale-105"
-                          : "bg-white border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-400"
-                      }`}
-                    >
-                      <span className="font-bold">{template.label}</span>
-                    </Button>
-                  ))}
-                </div>
-                <p className="mt-4 text-[10px] text-blue-600/70 text-center italic text-balance">
-                  Selecting a template will auto-fill typical values (Area,
-                  Beds, Baths, Amenities) without overwriting what you've
-                  already typed.
-                </p>
-              </div>
-            )}
 
             {/* Form */}
             <Form {...form}>
@@ -503,10 +527,10 @@ export default function CreatePropertyWizard({
         {/* Success Dialog */}
         <SuccessDialog
           open={showSuccessDialog}
-          editMode={editMode}
+          editMode={effectiveEditMode}
           onContinue={() => {
             setShowSuccessDialog(false);
-            if (editMode && onEditComplete) onEditComplete();
+            if (effectiveEditMode && onEditComplete) onEditComplete();
             else navigate("/dashboard");
           }}
         />

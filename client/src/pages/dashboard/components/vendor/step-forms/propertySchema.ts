@@ -46,9 +46,17 @@
 import { z } from 'zod';
 
 // Enums used in the backend
-const PropertyTypeEnum = z.enum(['rent', 'sale', 'commercial']);
-const CategoryEnum = z.enum(['apartment', 'house', 'plot', 'office']);
+const PropertyTypeEnum = z.enum(['rent', 'sale', 'commercial'], {
+  required_error: 'Property type is required',
+});
+const CategoryEnum = z.enum(['apartment', 'house', 'plot', 'office'], {
+  required_error: 'Category is required',
+});
+const UnitTypeEnum = z.enum(['1bhk', '2bhk', '3bhk', '4bhk'], {
+  required_error: 'Unit type is required',
+});
 const StatusEnum = z.enum(['pending', 'approved', 'rejected', 'sold', 'rented']);
+const BHK_CATEGORIES = ['apartment', 'house'] as const;
 
 // Coordinates schema
 const CoordinatesSchema = z.object({
@@ -63,7 +71,10 @@ export const propertyFormSchema = z.object({
   description: z.string().min(10, 'Description must be at least 10 characters'),
   propertyType: PropertyTypeEnum,
   category: CategoryEnum,
-  price: z.number().min(0, 'Price must be a positive number'),
+  unitType: UnitTypeEnum.optional(),
+  price: z
+    .number({ required_error: 'Price is required' })
+    .min(1, 'Price must be greater than 0'),
 
   // Location
   location: z.object({
@@ -76,9 +87,9 @@ export const propertyFormSchema = z.object({
 
   // Specifications
   specifications: z.object({
-    area: z.number().min(0, 'Area must be a positive number'),
-    bedrooms: z.number().min(0),
-    bathrooms: z.number().min(0),
+    area: z.number().min(1, 'Area must be at least 1 sqft'),
+    bedrooms: z.number().min(1, 'Bedrooms must be at least 1').optional(),
+    bathrooms: z.number().min(1, 'Bathrooms must be at least 1').optional(),
     furnishing: z.string().optional(),
     parking: z.boolean().optional(),
     amenities: z.array(z.string()).optional().default([]),
@@ -105,6 +116,42 @@ export const propertyFormSchema = z.object({
   // Timestamps (optional for creation, backend usually manages)
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
+}).superRefine((data, ctx) => {
+  const requiresBhk = BHK_CATEGORIES.includes(data.category as (typeof BHK_CATEGORIES)[number]);
+
+  if (requiresBhk) {
+    if (!data.unitType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['unitType'],
+        message: 'Unit type is required for flats and villas',
+      });
+    }
+
+    if (!data.specifications.bedrooms) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['specifications', 'bedrooms'],
+        message: 'Bedrooms are required for the selected unit type',
+      });
+    }
+
+    if (!data.specifications.bathrooms) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['specifications', 'bathrooms'],
+        message: 'Bathrooms are required for flats and villas',
+      });
+    }
+  }
+
+  if (!requiresBhk && data.unitType) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['unitType'],
+      message: 'Unit type is not applicable for plots or office spaces',
+    });
+  }
 });
 
 export type PropertyFormData = z.infer<typeof propertyFormSchema>;
